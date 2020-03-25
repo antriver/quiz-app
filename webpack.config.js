@@ -1,8 +1,10 @@
+const dotenv = require('dotenv');
 const fs = require('fs');
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 /**
  * Webpack config for a development build.
@@ -59,7 +61,7 @@ const webpackConfig = {
             {
                 test: /\.css$/,
                 use: [
-                    //MiniCssExtractPlugin.loader,
+                    // MiniCssExtractPlugin.loader,
                     {
                         loader: 'vue-style-loader' // creates style nodes from JS strings
                     },
@@ -71,7 +73,7 @@ const webpackConfig = {
             {
                 test: /\.less$/,
                 use: [
-                    //MiniCssExtractPlugin.loader,
+                    // MiniCssExtractPlugin.loader,
                     {
                         loader: 'vue-style-loader' // creates style nodes from JS strings
                     },
@@ -96,7 +98,11 @@ const webpackConfig = {
             verbose: true
         }),
 
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+
+        new webpack.DefinePlugin({
+            'process.env': dotenv.config({ path: path.join(__dirname, '/.env') }).parsed
+        }),
     ],
 
     optimization: {

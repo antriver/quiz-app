@@ -1,13 +1,16 @@
 const express = require('express');
-const socketIo = require('socket.io');
 const http = require('http');
+const path = require('path');
+const socketIo = require('socket.io');
 
 const Answer = require('./src/classes/Answer');
 const Player = require('./src/classes/Player');
 const Question = require('./src/classes/Question');
 const Room = require('./src/classes/Room');
 
-const port = 2053;
+const env = require('dotenv').config({ path: path.join(__dirname, '/.env') }).parsed;
+
+const port = env.PORT;
 
 // Fire it up
 const expressApp = express();
