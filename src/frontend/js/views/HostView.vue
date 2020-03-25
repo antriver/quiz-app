@@ -149,7 +149,6 @@ export default {
 </script>
 
 <style lang="less">
-
 #new-question-btns {
     padding: 10px;
     text-align: center;

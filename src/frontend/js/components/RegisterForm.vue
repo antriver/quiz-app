@@ -7,7 +7,8 @@
                class="input form-control text-center input-lg"
                placeholder="What's your name?" />
         <button type="submit"
-                class="btn btn-primary btn-lg">Let's Play
+                class="btn btn-primary btn-lg">
+            Let's Play
         </button>
     </form>
 </template>
@@ -66,4 +67,3 @@ export default {
     }
 }
 </style>
-

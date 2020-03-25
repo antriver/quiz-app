@@ -15,6 +15,13 @@
 export default {
     name: 'Letters',
 
+    props: {
+        active: {
+            type: Boolean,
+            default: false
+        }
+    },
+
     data() {
         return {
             choice: null,
@@ -48,13 +55,6 @@ export default {
         };
     },
 
-    props: {
-        active: {
-            type: Boolean,
-            default: false
-        }
-    },
-
     methods: {
         click(letter) {
             if (this.active && !this.choice) {
@@ -75,7 +75,6 @@ export default {
     grid-gap: 5px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-    //min-width: 0;
     overflow: hidden;
 
     .btn {
@@ -83,6 +82,12 @@ export default {
         align-items: center;
         justify-content: center;
         font-size: 30px;
+
+        &.btn-success {
+            animation-name: wiggle;
+            animation-timing-function: ease-in;
+            animation-duration: 1s;
+        }
     }
 }
 
@@ -97,12 +102,6 @@ export default {
     70% { transform: skewX(-2deg); }
     80% { transform: skewX(1deg); }
     90% { transform: skewX(0deg); }
-	100% { transform: skewX(0deg); }
-}
-
-.letters .btn.btn-success {
-    animation-name: wiggle;
-    animation-timing-function: ease-in;
-	animation-duration: 1s;
+    100% { transform: skewX(0deg); }
 }
 </style>

@@ -42,16 +42,6 @@ export default {
             this.currentQuestion = data ? new Question(data) : null;
             console.log('questionUpdated', this.currentQuestion);
         });
-
-        /*this.$root.$options.socket.on('newQuestion', (data) => {
-            console.log('new question', data);
-
-            this.currentQuestion = new Question(data.type);
-        });
-
-        this.$root.$options.socket.on('clearQuestion', () => {
-            this.currentQuestion = null;
-        });*/
     },
 
     methods: {
