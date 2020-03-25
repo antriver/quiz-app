@@ -24,7 +24,7 @@ expressApp.use(express.static('public'));
 
 /**
  * Not used yet.
- * 
+ *
  * @type {Room[]}
  */
 const rooms = [
