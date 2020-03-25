@@ -32,7 +32,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     // Create socket.io connection.
-    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()('https://localhost:2053');
+    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()('https://quiz.amirite.com');
     this.$root.$options.socket.on('newPlayer', function (data) {
       console.log('newPlayer', data);
     });

@@ -20,7 +20,7 @@ export default {
 
     created() {
         // Create socket.io connection.
-        this.$root.$options.socket = io('https://localhost:2053');
+        this.$root.$options.socket = io('https://quiz.amirite.com');
 
         this.$root.$options.socket.on('newPlayer', (data) => {
             console.log('newPlayer', data);
