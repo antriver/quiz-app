@@ -38,9 +38,8 @@ export default {
 
     created() {
         this.$root.$options.socket.on('questionUpdated', (data) => {
-            console.log('questionUpdated', data);
+            console.log('Question Updated', data);
             this.currentQuestion = data ? new Question(data) : null;
-            console.log('questionUpdated', this.currentQuestion);
         });
     },
 
