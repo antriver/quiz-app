@@ -71,17 +71,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Letters',
-  data: function data() {
-    return {
-      choice: null,
-      letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'Q V', 'W', 'Y', 'X Z']
-    };
-  },
   props: {
     active: {
       type: Boolean,
       "default": false
     }
+  },
+  data: function data() {
+    return {
+      choice: null,
+      letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'Q V', 'W', 'Y', 'X Z']
+    };
   },
   methods: {
     click: function click(letter) {
@@ -124,7 +124,7 @@ module.exports = exports;
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".letters {\n  width: 100%;\n  padding: 5px;\n  height: 100%;\n  display: grid;\n  grid-gap: 5px;\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;\n  overflow: hidden;\n}\n.letters .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 30px;\n}\n@keyframes wiggle {\n0% {\n    transform: skewX(9deg);\n}\n10% {\n    transform: skewX(-8deg);\n}\n20% {\n    transform: skewX(7deg);\n}\n30% {\n    transform: skewX(-6deg);\n}\n40% {\n    transform: skewX(5deg);\n}\n50% {\n    transform: skewX(-4deg);\n}\n60% {\n    transform: skewX(3deg);\n}\n70% {\n    transform: skewX(-2deg);\n}\n80% {\n    transform: skewX(1deg);\n}\n90% {\n    transform: skewX(0deg);\n}\n100% {\n    transform: skewX(0deg);\n}\n}\n.letters .btn.btn-success {\n  animation-name: wiggle;\n  animation-timing-function: ease-in;\n  animation-duration: 1s;\n}\n", ""]);
+exports.push([module.i, ".letters {\n  width: 100%;\n  padding: 5px;\n  height: 100%;\n  display: grid;\n  grid-gap: 5px;\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;\n  overflow: hidden;\n}\n.letters .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 30px;\n}\n.letters .btn.btn-success {\n  animation-name: wiggle;\n  animation-timing-function: ease-in;\n  animation-duration: 1s;\n}\n@keyframes wiggle {\n0% {\n    transform: skewX(9deg);\n}\n10% {\n    transform: skewX(-8deg);\n}\n20% {\n    transform: skewX(7deg);\n}\n30% {\n    transform: skewX(-6deg);\n}\n40% {\n    transform: skewX(5deg);\n}\n50% {\n    transform: skewX(-4deg);\n}\n60% {\n    transform: skewX(3deg);\n}\n70% {\n    transform: skewX(-2deg);\n}\n80% {\n    transform: skewX(1deg);\n}\n90% {\n    transform: skewX(0deg);\n}\n100% {\n    transform: skewX(0deg);\n}\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -278,13 +278,44 @@ var Question = /*#__PURE__*/function () {
 
     _classCallCheck(this, Question);
 
+    /**
+     * @type {Number}
+     */
     this.id = null;
+    /**
+     * @type {string}
+     */
+
     this.type = '';
+    /**
+     * @type {string}
+     */
+
     this.answer = '';
+    /**
+     * @type {boolean}
+     */
+
     this.started = false;
+    /**
+     * @type {boolean}
+     */
+
     this.ended = false;
+    /**
+     * @type {number}
+     */
+
     this.points = 1;
+    /**
+     * @type {boolean}
+     */
+
     this.evil = false;
+    /**
+     * @type {Answer[]}
+     */
+
     this.answers = [];
     hydrate(this, data);
   }
@@ -488,9 +519,17 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports) {
 
+/**
+ * @return {number}
+ */
 var generateId = function generateId() {
   return Date.now() + Math.round(Math.random() * 10000);
 };
+/**
+ * @param {object} obj
+ * @param {object} data
+ */
+
 
 var hydrate = function hydrate(obj, data) {
   Object.keys(data).forEach(function (key) {

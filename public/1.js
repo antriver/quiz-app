@@ -25,6 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 var _require = __webpack_require__(/*! @/funcs */ "./src/funcs.js"),
@@ -114,17 +115,9 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.$root.$options.socket.on('questionUpdated', function (data) {
-      console.log('questionUpdated', data);
+      console.log('Question Updated', data);
       _this.currentQuestion = data ? new _classes_Question__WEBPACK_IMPORTED_MODULE_0___default.a(data) : null;
-      console.log('questionUpdated', _this.currentQuestion);
     });
-    /*this.$root.$options.socket.on('newQuestion', (data) => {
-        console.log('new question', data);
-         this.currentQuestion = new Question(data.type);
-    });
-     this.$root.$options.socket.on('clearQuestion', () => {
-        this.currentQuestion = null;
-    });*/
   },
   methods: {
     /**
@@ -222,7 +215,7 @@ var render = function() {
       _c(
         "button",
         { staticClass: "btn btn-primary btn-lg", attrs: { type: "submit" } },
-        [_vm._v("Let's Play\n    ")]
+        [_vm._v("\n        Let's Play\n    ")]
       )
     ]
   )
@@ -320,13 +313,44 @@ var Player = function Player() {
 
   _classCallCheck(this, Player);
 
+  /**
+   * @type {Number}
+   */
   this.id = null;
+  /**
+   * @type {string}
+   */
+
   this.name = '';
+  /**
+   * @type {Date}
+   */
+
   this.joinedAt = new Date();
+  /**
+   * @type {Date}
+   */
+
   this.rejoinedAt = new Date();
+  /**
+   * @type {boolean}
+   */
+
   this.active = true;
+  /**
+   * @type {?Date}
+   */
+
   this.leftAt = null;
+  /**
+   * @type {String}
+   */
+
   this.websocketId = null;
+  /**
+   * @type {number}
+   */
+
   this.score = 0;
   hydrate(this, data);
 };

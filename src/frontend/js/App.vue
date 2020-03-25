@@ -13,8 +13,7 @@ import PlayerListService from '@/services/PlayerListService';
 export default {
     created() {
         // Create socket.io connection.
-        // FIXME: Get path from .env file
-        this.$root.$options.socket = io('https://quiz.amirite.com');
+        this.$root.$options.socket = io(process.env.SOCKET_URL);
 
         this.$root.$options.socket.on('newPlayer', (data) => {
             console.log('New Player', data);

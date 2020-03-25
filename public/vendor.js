@@ -5194,7 +5194,7 @@ function load() {
 
 	// If debug isn't set in LS, and we're in Electron, try to load $DEBUG
 	if (!r && typeof process !== 'undefined' && 'env' in process) {
-		r = process.env.DEBUG;
+		r = Object({"PORT":2053,"SOCKET_URL":http://localhost:2053}).DEBUG;
 	}
 
 	return r;
@@ -8788,7 +8788,7 @@ function load() {
 
 	// If debug isn't set in LS, and we're in Electron, try to load $DEBUG
 	if (!r && typeof process !== 'undefined' && 'env' in process) {
-		r = process.env.DEBUG;
+		r = Object({"PORT":2053,"SOCKET_URL":http://localhost:2053}).DEBUG;
 	}
 
 	return r;
@@ -10086,7 +10086,7 @@ function load() {
 
   // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
   if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = process.env.DEBUG;
+    r = Object({"PORT":2053,"SOCKET_URL":http://localhost:2053}).DEBUG;
   }
 
   return r;

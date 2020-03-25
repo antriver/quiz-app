@@ -21,26 +21,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      test: 'hello'
-    };
-  },
   created: function created() {
     // Create socket.io connection.
-    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()('https://quiz.amirite.com');
+    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()(http://localhost:2053);
     this.$root.$options.socket.on('newPlayer', function (data) {
-      console.log('newPlayer', data);
+      console.log('New Player', data);
     });
     this.$root.$options.socket.on('playerLeft', function (data) {
-      console.log('playerLeft', data);
+      console.log('Player Left', data);
     });
     this.$root.$options.socket.on('playersUpdated', function (data) {
-      console.log('playersUpdated', data);
+      console.log('Players Updateed', data);
       _services_PlayerListService__WEBPACK_IMPORTED_MODULE_1___default.a.setPlayers(data.players);
     });
   }
@@ -259,7 +253,6 @@ __webpack_require__.r(__webpack_exports__);
 var router = Object(_router__WEBPACK_IMPORTED_MODULE_2__["createRouter"])();
 var app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
   router: router,
-  // store,
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
   }
