@@ -1,12 +1,14 @@
+const { hydrate } = require('../funcs');
+
 class Room {
-    constructor(name) {
+    constructor(data = {}) {
         /**
          * @type {string}
          */
-        this.name = name;
+        this.name = '';
 
         /**
-         * @type {Object.<number, Player>}
+         * @type {Object<Player>}
          */
         this.players = {};
 
@@ -14,6 +16,13 @@ class Room {
          * @type {?Question}
          */
         this.currentQuestion = null;
+
+        /**
+         * @type {string}
+         */
+        this.hostWebsocketIds = [];
+
+        hydrate(this, data);
     }
 
     /**
@@ -21,6 +30,15 @@ class Room {
      */
     addPlayer(player) {
         this.players[player.id] = player;
+    }
+
+    /**
+     * @param {string} websocketId
+     *
+     * @return {Player|undefined}
+     */
+    getPlayerByWebsocketId(websocketId) {
+        return Object.values(this.players).find((p) => p.websocketId === websocketId);
     }
 
     /**

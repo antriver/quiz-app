@@ -2,8 +2,15 @@
 
 ## Building
 
-    webpack
+    npm run build
 
 ## Running
 
-    node server.js
+    npm start
+    
+## Running in Dev
+
+    # Run the Node server
+    npm start
+    # and run Webpack Dev Server
+    npm dev    

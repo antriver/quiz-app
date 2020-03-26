@@ -1,8 +1,7 @@
-const dotenv = require('dotenv');
+const Dotenv = require('dotenv-webpack');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 
@@ -13,7 +12,9 @@ const { VueLoaderPlugin } = require('vue-loader');
  */
 const webpackConfig = {
     mode: 'development',
+
     devtool: 'cheap-module-source-map',
+
     entry: {
         app: './src/frontend/js/app.js'
     },
@@ -67,7 +68,7 @@ const webpackConfig = {
                     },
                     {
                         loader: 'css-loader' // translates CSS into CommonJS
-                    }
+                    },
                 ]
             },
             {
@@ -82,9 +83,9 @@ const webpackConfig = {
                     },
                     {
                         loader: 'less-loader' // compiles Less to CSS
-                    }
+                    },
                 ]
-            }
+            },
         ]
     },
 
@@ -100,9 +101,7 @@ const webpackConfig = {
 
         new VueLoaderPlugin(),
 
-        new webpack.DefinePlugin({
-            'process.env': dotenv.config({ path: path.join(__dirname, '/.env') }).parsed
-        }),
+        new Dotenv()
     ],
 
     optimization: {

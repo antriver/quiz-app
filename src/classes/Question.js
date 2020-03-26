@@ -38,9 +38,9 @@ class Question {
         this.evil = false;
 
         /**
-         * @type {Answer[]}
+         * @type {Object<Answer>}
          */
-        this.answers = [];
+        this.answers = {};
 
         hydrate(this, data);
     }
@@ -49,7 +49,7 @@ class Question {
      * @param {Answer} answer
      */
     addAnswer(answer) {
-        this.answers.push(answer);
+        this.answers[answer.player.id] = answer;
     }
 }
 

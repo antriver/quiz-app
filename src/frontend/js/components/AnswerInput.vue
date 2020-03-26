@@ -4,7 +4,8 @@
             <h3>{{ title }}</h3>
         </div>
         <Letters :active="active"
-                 @choice="choice" />
+                 :existing-choice="existingChoice"
+                 @choice="onChoice" />
     </div>
 </template>
 
@@ -19,6 +20,10 @@ export default {
             type: Boolean,
             default: false
         },
+        existingChoice: {
+            type: String,
+            default: null
+        },
         title: {
             type: String,
             required: true
@@ -26,7 +31,7 @@ export default {
     },
 
     methods: {
-        choice(data) {
+        onChoice(data) {
             if (this.active) {
                 this.$emit('choice', data);
             }

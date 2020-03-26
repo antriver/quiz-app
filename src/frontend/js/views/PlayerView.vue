@@ -1,14 +1,14 @@
 <template>
     <div id="player">
-        <template v-if="!currentPlayer">
+        <template v-if="!player">
             <RegisterForm @registered="registered" />
         </template>
         <template v-else>
             <AnswerInput v-if="currentQuestion && !currentQuestion.ended"
-                         @choice="answerChosen"
                          :active="currentQuestion.started"
-                         :title="currentQuestion.started ? 'Select your answer...' : 'Get ready to answer.'"
-                         :question="currentQuestion"></AnswerInput>
+                         :title="title"
+                         :existing-choice="answer ? answer.answer : null"
+                         @choice="answerChosen"></AnswerInput>
             <div v-else>
                 Waiting for a question.
             </div>
@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import Question from '@/classes/Question';
 import AnswerInput from '../components/AnswerInput';
 import RegisterForm from '../components/RegisterForm';
+import { mapState } from 'vuex';
 
 export default {
     name: 'PlayerView',
@@ -29,18 +29,33 @@ export default {
         RegisterForm
     },
 
-    data() {
-        return {
-            currentPlayer: null,
-            currentQuestion: null
-        };
-    },
+    computed: {
+        ...mapState(['player', 'room']),
 
-    created() {
-        this.$root.$options.socket.on('questionUpdated', (data) => {
-            console.log('Question Updated', data);
-            this.currentQuestion = data ? new Question(data) : null;
-        });
+        currentQuestion() {
+            return this.room.currentQuestion;
+        },
+
+        title() {
+            if (!this.currentQuestion.started) {
+                return 'Get ready to answer...';
+            }
+
+            if (this.answer) {
+                return 'You have answered.';
+            }
+
+
+            return 'Select your answer...';
+        },
+
+        answer() {
+            if (this.room && this.room.currentQuestion) {
+                return this.room.currentQuestion.answers[this.player.id] || null;
+            }
+
+            return null;
+        }
     },
 
     methods: {
@@ -49,7 +64,7 @@ export default {
          */
         registered(player) {
             console.log('Player registered', player);
-            this.currentPlayer = player;
+            this.$store.commit('setPlayer', player);
         },
 
         /**

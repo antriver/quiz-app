@@ -1,5 +1,6 @@
 <template>
-    <div id="players"
+    <div v-if="room"
+         id="players"
          class="container">
         <table class="table table-striped">
             <thead>
@@ -20,20 +21,16 @@
 </template>
 
 <script>
-import PlayerListService from '@/services/PlayerListService';
+import { mapState } from 'vuex';
 
 export default {
     name: 'PlayersView',
 
-    data() {
-        return {
-            PlayerListService
-        };
-    },
-
     computed: {
+        ...mapState(['room']),
+
         players() {
-            return Object.values(PlayerListService.players).sort(
+            return Object.values(this.room.players).sort(
                 /**
                  * @param {Player} a
                  * @param {Player} b
@@ -46,12 +43,6 @@ export default {
                 }
             );
         }
-    },
-
-    created() {
-        this.$root.$options.socket.emit('getPlayers', {}, (result) => {
-            PlayerListService.setPlayers(result);
-        });
     }
 };
 </script>

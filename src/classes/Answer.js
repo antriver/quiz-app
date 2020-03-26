@@ -22,7 +22,16 @@ class Answer {
          */
         this.correct = false;
 
+        /**
+         * @type {Date}
+         */
+        this.answeredAt = null;
+
         hydrate(this, data);
+
+        if (this.answeredAt && !(this.answeredAt instanceof Date)) {
+            this.answeredAt = new Date(this.answeredAt);
+        }
     }
 }
 

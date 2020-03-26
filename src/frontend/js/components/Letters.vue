@@ -3,9 +3,9 @@
         <a v-for="letter in letters"
            :key="letter"
            class="btn"
-           :disabled="!active || choice"
+           :disabled="!active || selectedOption"
            :class="[
-               choice === letter ? 'btn-success active' : 'btn-primary'
+               selectedOption === letter ? 'btn-success active' : 'btn-primary'
            ]"
            @click="click(letter)">{{ letter }}</a>
     </div>
@@ -19,6 +19,11 @@ export default {
         active: {
             type: Boolean,
             default: false
+        },
+        existingChoice: {
+            type: String,
+            required: false,
+            default: null
         }
     },
 
@@ -53,6 +58,12 @@ export default {
                 'X Z',
             ]
         };
+    },
+
+    computed: {
+        selectedOption() {
+            return this.choice || this.existingChoice || null;
+        }
     },
 
     methods: {

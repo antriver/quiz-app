@@ -31,187 +31,207 @@ expressApp.use(express.static('public'));
  * @type {Room[]}
  */
 const rooms = [
-    new Room('Quiz'),
+    new Room({ name: 'Quiz' }),
 ];
 
-/**
- * @type {Object<number, Player>}
- */
-const players = {};
+const broadcastRoom = () => {
+    const room = rooms[0];
 
-/**
- * @type {Question}
- */
-let currentQuestion = null;
-
-/**
- * @param {string} websocketId
- *
- * @return {Player|undefined}
- */
-const getPlayerByWebsocketId = (websocketId) => {
-    return Object.values(players).find((p) => p.websocketId === websocketId);
-};
-
-const broadcastPlayers = () => {
-    io.sockets.emit('playersUpdated', {
-        players
+    // Instead of just emitting the room to all sockets we are going to iterate over the connected sockets,
+    // because some users (the hosts) should receive the full data.
+    Object.values(io.sockets.connected).forEach((socket) => {
+        emitRoomToSocket(socket, room);
     });
 };
 
-const broadcastCurrentQuestion = () => {
-    let broadcastData = null;
-    if (currentQuestion) {
-        broadcastData = JSON.parse(JSON.stringify(currentQuestion));
-        delete broadcastData.answer;
+const emitRoomToSocket = (socket, room) => {
+    if (room.hostWebsocketIds.indexOf(socket.id) !== -1) {
+        socket.emit('roomUpdated', room);
+    } else {
+        const strippedRoom = JSON.parse(JSON.stringify(room));
+        if (strippedRoom.currentQuestion) {
+            delete strippedRoom.currentQuestion.answer;
+
+            Object.values(strippedRoom.currentQuestion.answers).forEach((answer) => {
+                if (answer.player.websocketId !== socket.id) {
+                    delete answer.answer;
+                    delete answer.correct;
+                }
+            });
+        }
+        socket.emit('roomUpdated', strippedRoom);
     }
-    io.sockets.emit('questionUpdated', broadcastData);
 };
 
 // For each WebSocket connection.
-io.on('connection', (webSocket) => {
-    console.log(webSocket.id, 'Connected', webSocket.request.connection.remoteAddress);
+io.on('connection', (socket) => {
+    console.log(socket.id, 'Connected', socket.request.connection.remoteAddress);
+    broadcastRoom();
 
-    webSocket.on('registerPlayer', (data) => {
-        console.log(webSocket.id, 'Register Player', data);
+    socket.on('registerPlayer', (data, callback) => {
+        console.log(socket.id, 'Register Player', data);
 
-        if (!players[data.id]) {
-            players[data.id] = new Player(data.id, data.name);
+        const room = rooms[0];
+
+        if (!room.players[data.id]) {
+            room.players[data.id] = new Player({ id: data.id, name: data.name });
         }
 
-        players[data.id].name = data.name;
-        players[data.id].rejoinedAt = new Date();
-        players[data.id].active = true;
-        players[data.id].leftAt = null;
-        players[data.id].websocketId = webSocket.id;
+        room.players[data.id].name = data.name;
+        room.players[data.id].rejoinedAt = new Date();
+        room.players[data.id].active = true;
+        room.players[data.id].leftAt = null;
+        room.players[data.id].websocketId = socket.id;
 
         io.sockets.emit('newPlayer', {
-            player: players[data.id]
+            player: room.players[data.id]
         });
 
-        broadcastPlayers();
+        broadcastRoom();
+        callback();
     });
 
-    webSocket.on('disconnect', () => {
-        const player = getPlayerByWebsocketId(webSocket.id);
+    socket.on('disconnect', () => {
+        const room = rooms[0];
+        const player = room.getPlayerByWebsocketId(socket.id);
 
-        console.log(webSocket.id, 'Disconnect', player);
+        console.log(socket.id, 'Disconnect', player);
+
+        const index = room.hostWebsocketIds.indexOf(socket.id);
+        if (index !== -1) {
+            room.hostWebsocketIds.splice(index, 1);
+        }
 
         if (player) {
             player.active = false;
             player.leftAt = new Date();
 
-            io.sockets.emit('playerLeft', {
-                player,
-                players
-            });
+            broadcastRoom();
         }
-    });
-
-    webSocket.on('getPlayers', (data, callback) => {
-        callback(players);
     });
 
     /**
      * Player functions...
      */
 
-    webSocket.on('questionAnswered', (data) => {
-        console.log(webSocket.id, 'Question Answered', data);
+    // TODO: Change to http endpoint?
+    socket.on('questionAnswered', (data) => {
+        const room = rooms[0];
 
-        const player = getPlayerByWebsocketId(webSocket.id);
+        console.log(socket.id, 'Question Answered', data);
+
+        const player = room.getPlayerByWebsocketId(socket.id);
         if (!player) {
-            console.error(webSocket.id, 'Unknown player.');
+            console.error(socket.id, 'Unknown player.');
             return;
         }
 
-        if (!currentQuestion) {
-            console.error(webSocket.id, 'No current question.');
+        if (!room.currentQuestion) {
+            console.error(socket.id, 'No current question.');
             return;
         }
 
-        if (data.questionId !== currentQuestion.id) {
-            console.error(webSocket.id, 'Not the current question ID.', data.questionId);
+        if (data.questionId !== room.currentQuestion.id) {
+            console.error(socket.id, 'Not the current question ID.', data.questionId);
             return;
         }
 
-        if (!currentQuestion.started) {
-            console.error(webSocket.id, 'Too early.');
+        if (!room.currentQuestion.started) {
+            console.error(socket.id, 'Too early.');
             return;
         }
 
-        if (currentQuestion.ended) {
-            console.error(webSocket.id, 'Too late.');
+        if (room.currentQuestion.ended) {
+            console.error(socket.id, 'Too late.');
             return;
         }
 
         // Check if player already answered.
-        const existingAnswer = currentQuestion.answers.find((a) => a.player.id === player.id);
-        if (existingAnswer) {
-            console.error(webSocket.id, 'Already answered.');
+        if (room.currentQuestion.answers.hasOwnProperty(player.id)) {
+            console.error(socket.id, 'Already answered.');
             return;
         }
 
         const answer = new Answer({
             player,
-            answer: data.answer
+            answer: data.answer,
+            answeredAt: new Date()
         });
 
-        if (answer.answer === currentQuestion.answer) {
+        if (answer.answer === room.currentQuestion.answer) {
             answer.correct = true;
-            player.score += currentQuestion.points;
-        } else if (currentQuestion.evil) {
-            player.score -= currentQuestion.points;
+            player.score += room.currentQuestion.points;
+        } else if (room.currentQuestion.evil) {
+            player.score -= room.currentQuestion.points;
         }
+
+        room.currentQuestion.answers[player.id] = answer;
 
         io.sockets.emit('playerAnswered', {
             answer
         });
 
-        broadcastPlayers();
+        broadcastRoom();
     });
 
     /**
      * Host functions...
      */
 
-    webSocket.on('newQuestion', (data) => {
-        currentQuestion = new Question(data);
-        console.log(webSocket.id, 'New Question', currentQuestion);
-        broadcastCurrentQuestion();
-    });
+    socket.on('becomeHost', (data, callback) => {
+        const room = rooms[0];
+        console.log(socket.id, 'Become Host');
 
-    webSocket.on('clearQuestion', () => {
-        console.log(webSocket.id, 'Clear Question');
-        currentQuestion = null;
-        broadcastCurrentQuestion();
-    });
-
-    webSocket.on('resetScores', () => {
-        console.log(webSocket.id, 'Reset Scores');
-        Object.keys(players).forEach((id) => {
-            players[id].score = 0;
-        });
-        broadcastPlayers();
-    });
-
-    webSocket.on('startQuestion', (questionId) => {
-        console.log(webSocket.id, 'Start Question', questionId);
-        if (currentQuestion && questionId === currentQuestion.id) {
-            currentQuestion.started = true;
-        } else {
-            console.log(webSocket.id, 'Invalid question ID.');
+        if (room.hostWebsocketIds.indexOf(socket.id) === -1) {
+            room.hostWebsocketIds.push(socket.id);
         }
-        broadcastCurrentQuestion();
+
+        broadcastRoom();
+        callback();
     });
 
-    webSocket.on('endQuestion', (questionId) => {
-        console.log(webSocket.id, 'End Question', questionId);
-        if (currentQuestion && questionId === currentQuestion.id) {
-            currentQuestion.ended = true;
+    socket.on('newQuestion', (data) => {
+        const room = rooms[0];
+        room.currentQuestion = new Question(data);
+        console.log(socket.id, 'New Question', room.currentQuestion);
+        broadcastRoom();
+    });
+
+    socket.on('clearQuestion', () => {
+        const room = rooms[0];
+        console.log(socket.id, 'Clear Question');
+        room.currentQuestion = null;
+        broadcastRoom();
+    });
+
+    socket.on('resetScores', () => {
+        const room = rooms[0];
+        console.log(socket.id, 'Reset Scores');
+        Object.values(room.players).forEach((player) => {
+            player.score = 0;
+        });
+        broadcastRoom();
+    });
+
+    socket.on('startQuestion', (questionId) => {
+        const room = rooms[0];
+        console.log(socket.id, 'Start Question', questionId);
+        if (room.currentQuestion && questionId === room.currentQuestion.id) {
+            room.currentQuestion.started = true;
+        } else {
+            console.log(socket.id, 'Invalid question ID.');
+        }
+        broadcastRoom();
+    });
+
+    socket.on('endQuestion', (questionId) => {
+        const room = rooms[0];
+        console.log(socket.id, 'End Question', questionId);
+        if (room.currentQuestion && questionId === room.currentQuestion.id) {
+            room.currentQuestion.ended = true;
         } else {
             console.log('Invalid question ID.');
         }
-        broadcastCurrentQuestion();
+        broadcastRoom();
     });
 });
