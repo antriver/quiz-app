@@ -26,7 +26,8 @@ httpServer.listen(port, () => {
 expressApp.use(express.static('public'));
 
 /**
- * Not used yet.
+ * Only one room is hard coded currently.
+ * In future there could be multiple rooms.
  *
  * @type {Room[]}
  */
