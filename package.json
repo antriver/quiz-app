@@ -1,15 +1,15 @@
 {
   "name": "quiz-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Remote pub quiz app.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "build": "webpack",
     "dev": "webpack-dev-server"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Anthony Kuske <www.anthonykuske.com>",
+  "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
