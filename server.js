@@ -45,6 +45,10 @@ const broadcastRoom = () => {
     });
 };
 
+/**
+ * @param socket
+ * @param {Room} room
+ */
 const emitRoomToSocket = (socket, room) => {
     if (room.hostWebsocketIds.indexOf(socket.id) !== -1) {
         socket.emit('roomUpdated', room);
