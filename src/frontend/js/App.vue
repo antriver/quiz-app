@@ -30,14 +30,6 @@ export default {
             this.room = new Room(room);
             this.$store.commit('setRoom', room);
         });
-
-        this.$root.$options.socket.on('newPlayer', (data) => {
-            console.log('New Player', data);
-        });
-
-        this.$root.$options.socket.on('playerLeft', (data) => {
-            console.log('Player Left', data);
-        });
     }
 };
 </script>

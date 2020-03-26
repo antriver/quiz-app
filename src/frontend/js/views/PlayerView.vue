@@ -1,6 +1,6 @@
 <template>
     <div id="player">
-        <template v-if="!player">
+        <template v-if="!isRegisteredPlayer">
             <RegisterForm @registered="registered" />
         </template>
         <template v-else>
@@ -31,6 +31,10 @@ export default {
 
     computed: {
         ...mapState(['player', 'room']),
+
+        isRegisteredPlayer() {
+            return this.player && this.room && this.room.players[this.player.id];
+        },
 
         currentQuestion() {
             return this.room.currentQuestion;

@@ -74,6 +74,8 @@
             <br />
             <br />
 
+            <Scores />
+
             <a class="btn btn-sm btn-danger"
                @click.prevent="resetScores">Reset Scores</a>
         </div>
@@ -86,9 +88,10 @@ import AnswerInput from '../components/AnswerInput';
 import Question from '@/classes/Question';
 import { generateId } from '@/funcs';
 import { mapState } from 'vuex';
+import Scores from '@frontend/components/Scores';
 
 export default {
-    components: { AnswerInput },
+    components: { Scores, AnswerInput },
 
     data() {
         return {
