@@ -133,20 +133,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.room ? this.room.currentQuestion : null;
     },
     players: function players() {
+      var _this = this;
+
+      // Return only currently connected users, or those that have answered.
       return Object.values(this.room.players).filter(function (p) {
-        return p.active;
+        return p.active || _this.room.currentQuestion.answers.hasOwnProperty(p.id);
       });
     },
     answers: function answers() {
-      var _this = this;
+      var _this2 = this;
 
       if (!this.room || !this.room.currentQuestion) {
         return [];
       }
 
       var answers = this.players.map(function (player) {
-        if (_this.room.currentQuestion.answers.hasOwnProperty(player.id)) {
-          return _this.room.currentQuestion.answers[player.id];
+        if (_this2.room.currentQuestion.answers.hasOwnProperty(player.id)) {
+          return _this2.room.currentQuestion.answers[player.id];
         }
 
         return new _classes_Answer__WEBPACK_IMPORTED_MODULE_0___default.a({
@@ -168,12 +171,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     // Tell the server this socket will be a host and should receive more info.
     // Hide the UI until we know this is done.
     this.$root.$options.socket.emit('becomeHost', {}, function () {
-      _this2.isHost = true;
+      _this3.isHost = true;
     });
   },
   methods: {

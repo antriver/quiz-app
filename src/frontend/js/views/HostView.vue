@@ -112,7 +112,10 @@ export default {
         },
 
         players() {
-            return Object.values(this.room.players).filter((p) => p.active);
+            // Return only currently connected users, or those that have answered.
+            return Object.values(this.room.players).filter(
+                (p) => p.active || this.room.currentQuestion.answers.hasOwnProperty(p.id)
+            );
         },
 
         answers() {
