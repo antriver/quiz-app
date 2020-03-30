@@ -73,9 +73,7 @@ io.on('connection', (socket) => {
     console.log(socket.id, 'Connected', socket.request.connection.remoteAddress);
     broadcastRoom();
 
-    socket.on('registerPlayer', (data, callback) => {
-        console.log(socket.id, 'Register Player', data);
-
+    const registerPlayer = (data) => {
         const room = rooms[0];
 
         if (!room.players[data.id]) {
@@ -87,13 +85,39 @@ io.on('connection', (socket) => {
         room.players[data.id].active = true;
         room.players[data.id].leftAt = null;
         room.players[data.id].websocketId = socket.id;
+    };
 
-        io.sockets.emit('newPlayer', {
-            player: room.players[data.id]
-        });
+    // When a new user joins.
+    // Add them to the room and broadcast to everyone.
+    socket.on('registerPlayer', (data, callback) => {
+        console.log(socket.id, 'Register Player', data);
 
-        broadcastRoom();
-        callback();
+        if (data) {
+            registerPlayer(data);
+
+            const room = rooms[0];
+            io.sockets.emit('newPlayer', {
+                player: room.players[data.id]
+            });
+
+            broadcastRoom();
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
+    });
+
+    // When a user is confirming they're still here.
+    // Add them to the room but don't broadcast.
+    socket.on('reRegisterPlayer', (data, callback) => {
+        console.log(socket.id, 'Re-Register Player', data);
+        if (data) {
+            registerPlayer(data);
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
     });
 
     socket.on('disconnect', () => {
@@ -166,6 +190,12 @@ io.on('connection', (socket) => {
         if (answer.answer === room.currentQuestion.answer) {
             answer.correct = true;
             player.score += room.currentQuestion.points;
+
+            // It's possible for there to be a race condition and 2 people be first, but meh.
+            if (!Object.values(room.currentQuestion.answers).find((a) => a.correct)) {
+                player.score += 1;
+                answer.wasFirst = true;
+            }
         } else if (room.currentQuestion.evil) {
             player.score -= room.currentQuestion.points;
         }
@@ -192,7 +222,9 @@ io.on('connection', (socket) => {
         }
 
         broadcastRoom();
-        callback();
+        if (typeof callback === 'function') {
+            callback();
+        }
     });
 
     socket.on('newQuestion', (data) => {
@@ -215,6 +247,13 @@ io.on('connection', (socket) => {
         Object.values(room.players).forEach((player) => {
             player.score = 0;
         });
+        broadcastRoom();
+    });
+
+    socket.on('resetUsers', () => {
+        const room = rooms[0];
+        console.log(socket.id, 'Reset Scores');
+        room.players = {};
         broadcastRoom();
     });
 

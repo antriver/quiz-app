@@ -1,5 +1,5 @@
+const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
-const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -101,7 +101,11 @@ const webpackConfig = {
 
         new VueLoaderPlugin(),
 
-        new Dotenv()
+        new Dotenv(),
+
+        new CopyPlugin([
+            { from: 'src/assets', to: 'assets' },
+        ]),
     ],
 
     optimization: {
@@ -142,25 +146,10 @@ const webpackConfig = {
 
 };
 
-// We need to check if the stack directory exists because this would break running in the pipeline without it.
-// The pipeline does not need to run dev server so there's no point adding stack to it.
-const sslPath = path.join(__dirname, '../stack/config/ssl/');
-
-if (fs.existsSync(sslPath)) {
-    webpackConfig.devServer = {
-        disableHostCheck: true,
-        contentBase: path.join(__dirname, 'public'),
-
-        publicPath: webpackConfig.output.publicPath + '/',
-
-        host: 'epos.digitickets.test',
-        port: 9020,
-        https: {
-            key: fs.readFileSync(path.join(sslPath, 'dt-test.key')),
-            cert: fs.readFileSync(path.join(sslPath, 'dt-test.crt')),
-            ca: fs.readFileSync(path.join(sslPath, 'cacert.pem'))
-        }
-    };
-}
+webpackConfig.devServer = {
+    contentBase: path.join(__dirname, '/public/'),
+    host: '0.0.0.0',
+    publicPath: webpackConfig.output.publicPath
+};
 
 module.exports = webpackConfig;

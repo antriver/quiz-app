@@ -3,7 +3,14 @@
         <div class="title-row text-center">
             <h3>{{ title }}</h3>
         </div>
-        <Letters :active="active"
+
+        <Letters v-if="questionType === 'letters'"
+                 :active="active"
+                 :existing-choice="existingChoice"
+                 @choice="onChoice" />
+        <Letters v-else-if="questionType === 'multiple'"
+                 :multiple-choice="true"
+                 :active="active"
                  :existing-choice="existingChoice"
                  @choice="onChoice" />
     </div>
@@ -23,6 +30,10 @@ export default {
         existingChoice: {
             type: String,
             default: null
+        },
+        questionType: {
+            type: String,
+            required: true
         },
         title: {
             type: String,
@@ -46,6 +57,7 @@ export default {
     flex-direction: column;
     width: 100%;
     height: 100%;
+    max-height: 736px;
 
     .title-row {
         flex-grow: 0;
@@ -70,6 +82,7 @@ export default {
     .btn[disabled]:not(.active) {
         filter: grayscale(100%);
     }
+
     .btn.active {
         opacity: 1 !important;
     }

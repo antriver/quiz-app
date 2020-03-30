@@ -1,22 +1,62 @@
 <template>
-    <div class="letters">
+    <div class="letters"
+         :class="multipleChoice ? 'multiple-choice' : ''">
         <a v-for="letter in letters"
            :key="letter"
            class="btn"
            :disabled="!active || selectedOption"
            :class="[
-               selectedOption === letter ? 'btn-success active' : 'btn-primary'
+               selectedOption === letter ? 'btn-info active' : 'btn-primary'
            ]"
            @click="click(letter)">{{ letter }}</a>
     </div>
 </template>
 
 <script>
+
+const allLetters = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'R',
+    'S',
+    'T',
+    'U',
+    'Q V',
+    'W',
+    'Y',
+    'X Z',
+];
+
+const multipleChoiceLetters = [
+    'A',
+    'B',
+    'C',
+    'D',
+];
+
 export default {
     name: 'Letters',
 
     props: {
         active: {
+            type: Boolean,
+            default: false
+        },
+        multipleChoice: {
             type: Boolean,
             default: false
         },
@@ -29,38 +69,15 @@ export default {
 
     data() {
         return {
-            choice: null,
-
-            letters: [
-                'A',
-                'B',
-                'C',
-                'D',
-                'E',
-                'F',
-                'G',
-                'H',
-                'I',
-                'J',
-                'K',
-                'L',
-                'M',
-                'N',
-                'O',
-                'P',
-                'R',
-                'S',
-                'T',
-                'U',
-                'Q V',
-                'W',
-                'Y',
-                'X Z',
-            ]
+            choice: null
         };
     },
 
     computed: {
+        letters() {
+            return this.multipleChoice ? multipleChoiceLetters : allLetters;
+        },
+
         selectedOption() {
             return this.choice || this.existingChoice || null;
         }
@@ -88,13 +105,18 @@ export default {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
     overflow: hidden;
 
+    &.multiple-choice {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
     .btn {
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 30px;
 
-        &.btn-success {
+        &.active {
             animation-name: wiggle;
             animation-timing-function: ease-in;
             animation-duration: 1s;

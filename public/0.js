@@ -21,6 +21,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AnswerInput',
@@ -35,6 +42,10 @@ __webpack_require__.r(__webpack_exports__);
     existingChoice: {
       type: String,
       "default": null
+    },
+    questionType: {
+      type: String,
+      required: true
     },
     title: {
       type: String,
@@ -74,10 +85,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+var allLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'Q V', 'W', 'Y', 'X Z'];
+var multipleChoiceLetters = ['A', 'B', 'C', 'D'];
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Letters',
   props: {
     active: {
+      type: Boolean,
+      "default": false
+    },
+    multipleChoice: {
       type: Boolean,
       "default": false
     },
@@ -89,11 +107,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      choice: null,
-      letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'Q V', 'W', 'Y', 'X Z']
+      choice: null
     };
   },
   computed: {
+    letters: function letters() {
+      return this.multipleChoice ? multipleChoiceLetters : allLetters;
+    },
     selectedOption: function selectedOption() {
       return this.choice || this.existingChoice || null;
     }
@@ -121,7 +141,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".answer-input {\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n}\n.answer-input .title-row {\n  flex-grow: 0;\n  flex-shrink: 0;\n}\n.answer-input .letters {\n  flex-grow: 1;\n  flex-shrink: 1;\n}\n.answer-input h3 {\n  margin: 10px 0 5px;\n  padding: 0;\n  font-size: 16px;\n}\n.answer-input .btn {\n  transition: opacity 0.1s ease-out;\n}\n.answer-input .btn[disabled]:not(.active) {\n  filter: grayscale(100%);\n}\n.answer-input .btn.active {\n  opacity: 1 !important;\n}\n", ""]);
+exports.push([module.i, ".answer-input {\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n  max-height: 736px;\n}\n.answer-input .title-row {\n  flex-grow: 0;\n  flex-shrink: 0;\n}\n.answer-input .letters {\n  flex-grow: 1;\n  flex-shrink: 1;\n}\n.answer-input h3 {\n  margin: 10px 0 5px;\n  padding: 0;\n  font-size: 16px;\n}\n.answer-input .btn {\n  transition: opacity 0.1s ease-out;\n}\n.answer-input .btn[disabled]:not(.active) {\n  filter: grayscale(100%);\n}\n.answer-input .btn.active {\n  opacity: 1 !important;\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -139,7 +159,7 @@ module.exports = exports;
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".letters {\n  width: 100%;\n  padding: 5px;\n  height: 100%;\n  display: grid;\n  grid-gap: 5px;\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;\n  overflow: hidden;\n}\n.letters .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 30px;\n}\n.letters .btn.btn-success {\n  animation-name: wiggle;\n  animation-timing-function: ease-in;\n  animation-duration: 1s;\n}\n@keyframes wiggle {\n0% {\n    transform: skewX(9deg);\n}\n10% {\n    transform: skewX(-8deg);\n}\n20% {\n    transform: skewX(7deg);\n}\n30% {\n    transform: skewX(-6deg);\n}\n40% {\n    transform: skewX(5deg);\n}\n50% {\n    transform: skewX(-4deg);\n}\n60% {\n    transform: skewX(3deg);\n}\n70% {\n    transform: skewX(-2deg);\n}\n80% {\n    transform: skewX(1deg);\n}\n90% {\n    transform: skewX(0deg);\n}\n100% {\n    transform: skewX(0deg);\n}\n}\n", ""]);
+exports.push([module.i, ".letters {\n  width: 100%;\n  padding: 5px;\n  height: 100%;\n  display: grid;\n  grid-gap: 5px;\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;\n  overflow: hidden;\n}\n.letters.multiple-choice {\n  grid-template-columns: 1fr 1fr;\n  grid-template-rows: 1fr 1fr;\n}\n.letters .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 30px;\n}\n.letters .btn.active {\n  animation-name: wiggle;\n  animation-timing-function: ease-in;\n  animation-duration: 1s;\n}\n@keyframes wiggle {\n0% {\n    transform: skewX(9deg);\n}\n10% {\n    transform: skewX(-8deg);\n}\n20% {\n    transform: skewX(7deg);\n}\n30% {\n    transform: skewX(-6deg);\n}\n40% {\n    transform: skewX(5deg);\n}\n50% {\n    transform: skewX(-4deg);\n}\n60% {\n    transform: skewX(3deg);\n}\n70% {\n    transform: skewX(-2deg);\n}\n80% {\n    transform: skewX(1deg);\n}\n90% {\n    transform: skewX(0deg);\n}\n100% {\n    transform: skewX(0deg);\n}\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -169,10 +189,24 @@ var render = function() {
         _c("h3", [_vm._v(_vm._s(_vm.title))])
       ]),
       _vm._v(" "),
-      _c("Letters", {
-        attrs: { active: _vm.active, "existing-choice": _vm.existingChoice },
-        on: { choice: _vm.onChoice }
-      })
+      _vm.questionType === "letters"
+        ? _c("Letters", {
+            attrs: {
+              active: _vm.active,
+              "existing-choice": _vm.existingChoice
+            },
+            on: { choice: _vm.onChoice }
+          })
+        : _vm.questionType === "multiple"
+        ? _c("Letters", {
+            attrs: {
+              "multiple-choice": true,
+              active: _vm.active,
+              "existing-choice": _vm.existingChoice
+            },
+            on: { choice: _vm.onChoice }
+          })
+        : _vm._e()
     ],
     1
   )
@@ -201,7 +235,10 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "letters" },
+    {
+      staticClass: "letters",
+      class: _vm.multipleChoice ? "multiple-choice" : ""
+    },
     _vm._l(_vm.letters, function(letter) {
       return _c(
         "a",
@@ -209,7 +246,7 @@ var render = function() {
           key: letter,
           staticClass: "btn",
           class: [
-            _vm.selectedOption === letter ? "btn-success active" : "btn-primary"
+            _vm.selectedOption === letter ? "btn-info active" : "btn-primary"
           ],
           attrs: { disabled: !_vm.active || _vm.selectedOption },
           on: {

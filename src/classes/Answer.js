@@ -23,6 +23,11 @@ class Answer {
         this.correct = false;
 
         /**
+         * @type {boolean}
+         */
+        this.wasFirst = false;
+
+        /**
          * @type {Date}
          */
         this.answeredAt = null;

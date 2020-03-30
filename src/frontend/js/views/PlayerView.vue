@@ -1,16 +1,21 @@
 <template>
     <div id="player">
+        <img v-if="!isRegisteredPlayer || !(currentQuestion && !currentQuestion.ended)"
+             id="corner-img"
+             src="/assets/img/question.png" />
+
         <template v-if="!isRegisteredPlayer">
             <RegisterForm @registered="registered" />
         </template>
         <template v-else>
             <AnswerInput v-if="currentQuestion && !currentQuestion.ended"
+                         :questionType="currentQuestion.type"
                          :active="currentQuestion.started"
                          :title="title"
                          :existing-choice="answer ? answer.answer : null"
                          @choice="answerChosen"></AnswerInput>
             <div v-else>
-                Waiting for a question.
+                Wait for the host to send you a question...
             </div>
         </template>
     </div>
@@ -49,7 +54,6 @@ export default {
                 return 'You have answered.';
             }
 
-
             return 'Select your answer...';
         },
 
@@ -60,6 +64,17 @@ export default {
 
             return null;
         }
+    },
+
+    created() {
+        this.$root.$options.socket.on('roomUpdated', () => {
+            setTimeout(() => {
+                this.$root.$options.socket.emit(
+                    'reRegisterPlayer',
+                    this.player
+                );
+            }, 500);
+        });
     },
 
     methods: {
@@ -81,3 +96,13 @@ export default {
     }
 };
 </script>
+
+<style lang="less">
+#corner-img {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 150px;
+    z-index: -1;
+}
+</style>

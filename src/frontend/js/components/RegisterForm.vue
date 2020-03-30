@@ -65,6 +65,7 @@ export default {
     width: 80%;
     max-width: 400px;
     text-align: center;
+    padding-bottom: 60px;
 
     .form-control {
         margin: 20px 0;
