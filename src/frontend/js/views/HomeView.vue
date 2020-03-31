@@ -106,8 +106,12 @@
                             <li>You can see the current scores on the first page.</li>
                             <li>Start a new question by selecting letters, numbers, or multiple choice.</li>
                             <li>Enter the correct answer so users can earn points if they get it right.</li>
-                            <li>When you're ready for players to stat answering press <strong>Start Answering</strong>.</li>
-                            <li>When time is up press <strong>Stop Answering</strong>. You'll see who answered and who was correct. Bonus points are awarded for the fastest player, and for the closest answer in a numbers question.</li>
+                            <li>When you're ready for players to stat answering press <strong>Start Answering</strong>.
+                            </li>
+                            <li>When time is up press <strong>Stop Answering</strong>. You'll see who answered and who
+                                was correct. Bonus points are awarded for the fastest player, and for the closest answer
+                                in a numbers question.
+                            </li>
                         </ul>
                     </div>
                     <div class="col-md-4">
@@ -144,69 +148,50 @@
 
     section {
         .container {
-            padding: 50px 0;
+            padding: 30px 15px;
         }
     }
 
     section:nth-child(odd) {
         background: #f6f7eb;
     }
+
+    #features {
+        text-align: center;
+
+        div:not(:last-child) {
+            margin-bottom: 30px;
+        }
+    }
 }
 
 #home-hero {
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
     color: #fff;
     position: relative;
     overflow: hidden;
 
-    &:after {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ff6b21+32,f7b733+100 */
-        background: #ff6b21; /* Old browsers */
-        background: -moz-linear-gradient(-45deg, #ff6b21 32%, #f7b733 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(-45deg, #ff6b21 32%, #f7b733 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(135deg, #ff6b21 32%, #f7b733 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff6b21', endColorstr='#f7b733',GradientType=1); /* IE6-9 fallback on horizontal gradient */
-
-        z-index: 0;
-    }
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ff6b21+32,f7b733+100 */
+    background: #ff6b21; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #ff6b21 32%, #f7b733 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #ff6b21 32%, #f7b733 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #ff6b21 32%, #f7b733 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff6b21', endColorstr='#f7b733',GradientType=1); /* IE6-9 fallback on horizontal gradient */
 
     > .container {
         z-index: 2;
         margin: auto;
         position: relative;
-        padding: 0;
-
-        display: flex;
-        align-items: stretch;
-        justify-content: stretch;
-
+        padding: 60px 15px 0;
         text-align: center;
-        min-height: 70vh;
     }
 
     #title-col {
-        flex-basis: 40%;
-        margin-right: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 50px;
+        padding-bottom: 30px;
     }
 
     #screenshot-col {
-        align-self: flex-end;
-
         > img {
-            margin-top: 50px;
+            margin-top: 15px;
         }
 
         .btn {
@@ -230,7 +215,8 @@
     }
 
     #screenshots {
-        max-width: 500px;
+        width: auto;
+        max-width: 100%;
     }
 
     p {
@@ -238,24 +224,65 @@
     }
 }
 
-#features {
-    display: grid;
-    text-align: center;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 30px;
+@media (min-width: @screen-md-max) {
+    h2 {
+        text-align: center;
+    }
 }
 
-/*@media (min-width: @screen-lg) {
-    #home-hero {
-        &:after {
-            width: 200%;
-            height: 200%;
-            bottom: 0;
-            left: 150px;
-            transform: rotate(-7deg);
-            border-radius: 100px;
-            transform-origin: bottom left;
+@media (min-width: @screen-lg) {
+    #home {
+
+        section {
+            .container {
+                padding: 50px 15px;
+            }
+        }
+
+        #features {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 30px;
+
+            div {
+                margin: 0;
+            }
         }
     }
-}*/
+
+    #home-hero {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+
+        > .container {
+            padding: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            min-height: 70vh;
+        }
+
+        #title-col {
+            flex-basis: 40%;
+            margin-right: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 50px;
+        }
+
+        #screenshot-col {
+            align-self: flex-end;
+
+            > img {
+                margin-top: 50px;
+            }
+        }
+
+        #screenshots {
+            max-width: 500px;
+        }
+    }
+}
 </style>

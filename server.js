@@ -12,13 +12,15 @@ const Room = require('./src/classes/Room');
 
 const env = require('dotenv').config({ path: path.join(__dirname, '/.env') }).parsed;
 
+console.log('env', env);
+
 const port = env.PORT;
 
 // Fire it up
 const expressApp = express();
 
 let httpServer;
-if (env.HTTPS) {
+if (env.HTTPS === 'true') {
     const httpsCredentials = {
         cert: fs.readFileSync(path.join(__dirname, 'ssl/cert.pem')),
         key: fs.readFileSync(path.join(__dirname, 'ssl/key.pem'))

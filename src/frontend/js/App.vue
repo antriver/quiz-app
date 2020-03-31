@@ -20,6 +20,7 @@ export default {
     created() {
         // Create socket.io connection.
         this.$root.$options.socket = io(
+            process.env.SOCKET_URL,
             {
                 timeout: 1000,
                 transports: ['websocket']
