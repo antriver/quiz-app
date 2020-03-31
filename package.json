@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "webpack",
+    "build-prod": "webpack --config webpack.prod.config.js",
     "dev": "webpack-dev-server"
   },
   "author": "Anthony Kuske <www.anthonykuske.com>",
