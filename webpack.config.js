@@ -104,7 +104,7 @@ const webpackConfig = {
         new Dotenv(),
 
         new CopyPlugin([
-            { from: 'src/assets', to: 'assets' },
+            { from: 'src/public', to: '' },
         ]),
     ],
 
