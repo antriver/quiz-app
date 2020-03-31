@@ -147,7 +147,7 @@ export default {
     }
 }
 
-@media (min-width: @screen-md-max) {
+@media (max-width: @screen-md-max) {
     h2 {
         text-align: center;
     }
