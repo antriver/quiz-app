@@ -22,6 +22,7 @@ export default {
         this.$root.$options.socket = io(
             process.env.SOCKET_URL,
             {
+                timeout: 1000,
                 transports: ['websocket']
             }
         );

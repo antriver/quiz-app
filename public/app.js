@@ -34,6 +34,7 @@ __webpack_require__.r(__webpack_exports__);
 
     // Create socket.io connection.
     this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()("http://lumos.themediadudes.com:2053", {
+      timeout: 1000,
       transports: ['websocket']
     });
     this.$root.$options.socket.on('roomUpdated', function (room) {
