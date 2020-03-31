@@ -79,7 +79,7 @@ export default {
         this.$root.$options.socket.on('connect', () => {
             if (this.player) {
                 this.$root.$options.socket.emit(
-                    'reRegisterPlayer',
+                    'registerPlayer',
                     this.player
                 );
             }
