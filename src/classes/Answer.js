@@ -28,9 +28,24 @@ class Answer {
         this.wasFirst = false;
 
         /**
+         * @type {boolean}
+         */
+        this.wasClosest = false;
+
+        /**
+         * @type {Number}
+         */
+        this.distanceFromAnswer = null;
+
+        /**
          * @type {Date}
          */
         this.answeredAt = null;
+
+        /**
+         * @type {number}
+         */
+        this.points = 0;
 
         hydrate(this, data);
 

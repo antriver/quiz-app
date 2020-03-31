@@ -13,15 +13,20 @@
                  :active="active"
                  :existing-choice="existingChoice"
                  @choice="onChoice" />
+        <NumberPad v-else-if="questionType === 'numbers'"
+                   :active="active"
+                   :existing-choice="existingChoice"
+                   @choice="onChoice" />
     </div>
 </template>
 
 <script>
 import Letters from './Letters.vue';
+import NumberPad from './NumberPad.vue';
 
 export default {
     name: 'AnswerInput',
-    components: { Letters },
+    components: { Letters, NumberPad },
     props: {
         active: {
             type: Boolean,

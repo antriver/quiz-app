@@ -55,8 +55,8 @@
             <a class="btn btn-primary btn-lg"
                @click.prevent="newQuestion('multiple')">New Multiple Choice Question</a>
 
-            <!--<a class="btn btn-primary btn-lg"
-                   @click.prevent="newQuestion('numbers')">New Numbers Question</a>-->
+            <a class="btn btn-primary btn-lg"
+               @click.prevent="newQuestion('numbers')">New Numbers Question</a>
 
             <Scores />
 
@@ -118,7 +118,8 @@ export default {
         newQuestion(type) {
             this.nextQuestion = new Question({
                 id: generateId(),
-                type
+                type,
+                points: type === 'numbers' ? 2 : 1
             });
         },
 

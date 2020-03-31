@@ -51,6 +51,13 @@ class Question {
     addAnswer(answer) {
         this.answers[answer.player.id] = answer;
     }
+
+    /**
+     * @return {Answer[]}
+     */
+    getCorrectAnswers() {
+        return Object.values(this.answers).filter((a) => a.correct);
+    }
 }
 
 module.exports = Question;

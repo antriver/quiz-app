@@ -189,16 +189,18 @@ io.on('connection', (socket) => {
 
         if (answer.answer === room.currentQuestion.answer) {
             answer.correct = true;
-            player.score += room.currentQuestion.points;
+            answer.points = room.currentQuestion.points;
 
             // It's possible for there to be a race condition and 2 people be first, but meh.
-            if (!Object.values(room.currentQuestion.answers).find((a) => a.correct)) {
-                player.score += 1;
+            if (room.currentQuestion.getCorrectAnswers().length < 1) {
+                answer.points += 1;
                 answer.wasFirst = true;
             }
         } else if (room.currentQuestion.evil) {
-            player.score -= room.currentQuestion.points;
+            answer.points = -room.currentQuestion.points;
         }
+
+        player.score += answer.points;
 
         room.currentQuestion.answers[player.id] = answer;
 
@@ -273,6 +275,32 @@ io.on('connection', (socket) => {
         console.log(socket.id, 'End Question', questionId);
         if (room.currentQuestion && questionId === room.currentQuestion.id) {
             room.currentQuestion.ended = true;
+
+            const answers = Object.values(room.currentQuestion.answers);
+            // If it's a numbers question and nobody got it right give points to the players that were the closest.
+            if (room.currentQuestion.getCorrectAnswers().length < 1 && answers.length > 0) {
+                answers.forEach((a) => {
+                    a.distanceFromAnswer = Math.abs(room.currentQuestion.answer - a.answer);
+                });
+
+                answers.sort((a, b) => {
+                    if (a.distanceFromAnswer === b.distanceFromAnswer) {
+                        return 0;
+                    }
+
+                    return a.distanceFromAnswer < b.distanceFromAnswer ? -1 : 1;
+                });
+
+                let closestDistance = null;
+                answers.forEach((a) => {
+                    if (closestDistance === null || a.distanceFromAnswer === closestDistance) {
+                        a.wasClosest = true;
+                        a.points = 1;
+                        a.player.score += 1;
+                    }
+                    closestDistance = a.distanceFromAnswer;
+                });
+            }
         } else {
             console.log('Invalid question ID.');
         }

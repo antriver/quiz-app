@@ -5,6 +5,7 @@
                 <tr>
                     <th>Player</th>
                     <th>Answer</th>
+                    <th>Points</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,12 @@
 
                         <span v-if="answer.wasFirst"
                               class="label label-info">First</span>
+
+                        <span v-if="answer.wasClosest"
+                              class="label label-info">Closest</span>
+                    </td>
+                    <td>
+                        {{ (answer.points > 0 ? '+' : '') + answer.points }}
                     </td>
                 </tr>
             </tbody>
@@ -73,3 +80,14 @@ export default {
     }
 };
 </script>
+
+<style lang="less">
+.answers {
+    table {
+        td,
+        th {
+            width: 33% !important;
+        }
+    }
+}
+</style>
