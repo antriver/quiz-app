@@ -27,6 +27,14 @@ export default {
             }
         );
 
+        this.$root.$options.socket.on('connect', () => {
+            console.log('Connected');
+        });
+
+        this.$root.$options.socket.on('disconnect', () => {
+            console.log('Disconnected');
+        });
+
         this.$root.$options.socket.on('roomUpdated', (room) => {
             this.room = new Room(room);
             this.$store.commit('setRoom', room);

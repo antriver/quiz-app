@@ -37,6 +37,12 @@ __webpack_require__.r(__webpack_exports__);
       timeout: 1000,
       transports: ['websocket']
     });
+    this.$root.$options.socket.on('connect', function () {
+      console.log('Connected');
+    });
+    this.$root.$options.socket.on('disconnect', function () {
+      console.log('Disconnected');
+    });
     this.$root.$options.socket.on('roomUpdated', function (room) {
       _this.room = new _classes_Room__WEBPACK_IMPORTED_MODULE_1___default.a(room);
 
