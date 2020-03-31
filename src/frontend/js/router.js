@@ -5,7 +5,8 @@ const createRouter = () => {
     Vue.use(VueRouter);
 
     const routes = [
-        { path: '/', component: () => import('@frontend/views/PlayerView.vue') },
+        { path: '/', component: () => import('@frontend/views/HomeView.vue') },
+        { path: '/player', component: () => import('@frontend/views/PlayerView.vue') },
         { path: '/host', component: () => import('@frontend/views/HostView.vue') },
         { path: '/players', component: () => import('@frontend/views/PlayersView.vue') },
     ];
