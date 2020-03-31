@@ -235,6 +235,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$root.$options.socket.emit('becomeHost', {}, function () {
       _this2.isHost = true;
     });
+    this.$root.$options.socket.on('connect', function () {
+      _this2.isHost = false;
+
+      _this2.$root.$options.socket.emit('becomeHost', {}, function () {
+        _this2.isHost = true;
+      });
+    });
   },
   methods: {
     newQuestion: function newQuestion(type) {

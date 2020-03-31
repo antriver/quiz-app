@@ -112,6 +112,13 @@ export default {
         this.$root.$options.socket.emit('becomeHost', {}, () => {
             this.isHost = true;
         });
+
+        this.$root.$options.socket.on('connect', () => {
+            this.isHost = false;
+            this.$root.$options.socket.emit('becomeHost', {}, () => {
+                this.isHost = true;
+            });
+        });
     },
 
     methods: {

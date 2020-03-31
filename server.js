@@ -147,7 +147,7 @@ io.on('connection', (socket) => {
     socket.on('questionAnswered', (data) => {
         const room = rooms[0];
 
-        console.log(socket.id, 'Question Answered', data.name, data.answer);
+        console.log(socket.id, 'Question Answered', data.answer);
 
         const player = room.getPlayerByWebsocketId(socket.id);
         if (!player) {
