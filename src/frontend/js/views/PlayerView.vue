@@ -75,6 +75,15 @@ export default {
                 );
             }, 500);
         });
+
+        this.$root.$options.socket.on('connect', () => {
+            if (this.player) {
+                this.$root.$options.socket.emit(
+                    'reRegisterPlayer',
+                    this.player
+                );
+            }
+        });
     },
 
     methods: {

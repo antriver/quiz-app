@@ -152,6 +152,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this.$root.$options.socket.emit('reRegisterPlayer', _this.player);
       }, 500);
     });
+    this.$root.$options.socket.on('connect', function () {
+      if (_this.player) {
+        _this.$root.$options.socket.emit('reRegisterPlayer', _this.player);
+      }
+    });
   },
   methods: {
     /**
