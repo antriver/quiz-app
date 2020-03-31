@@ -33,7 +33,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     // Create socket.io connection.
-    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()("http://localhost:2053", {
+    this.$root.$options.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_0___default()("https://questicals.com", {
       timeout: 1000,
       transports: ['websocket']
     });
