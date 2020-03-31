@@ -1,6 +1,5 @@
 <template>
     <div id="home">
-
         <HomeHero />
 
         <section>
@@ -49,8 +48,10 @@
                     <div>
                         <i class="fas fa-people-arrows fa-4x"></i>
                         <h3>Closest Answer</h3>
-                        <p>If nobody correctly answers a number question the players that guessed closest get 1
-                            point.</p>
+                        <p>
+                            If nobody correctly answers a number question the players that guessed closest get 1
+                            point.
+                        </p>
                     </div>
 
                     <div>
@@ -68,9 +69,13 @@
 
                 <div class="row">
                     <div class="col-md-12">
-
                         <div class="text-center"
                              style="margin: 30px">
+                            <a class="btn btn-primary btn-lg"
+                               href="#"
+                               @click.prevent="hostGame">
+                                Host A Game
+                            </a>
                             <router-link class="btn btn-primary btn-lg"
                                          to="/host">
                                 Host A Game
@@ -83,9 +88,11 @@
                             <li>You can see the current scores on the first page.</li>
                             <li>Start a new question by selecting letters, numbers, or multiple choice.</li>
                             <li>Enter the correct answer so users can earn points if they get it right.</li>
-                            <li>When you're ready for players to stat answering press <strong>Start Answering</strong>.
+                            <li>
+                                When you're ready for players to stat answering press <strong>Start Answering</strong>.
                             </li>
-                            <li>When time is up press <strong>Stop Answering</strong>. You'll see who answered and who
+                            <li>
+                                When time is up press <strong>Stop Answering</strong>. You'll see who answered and who
                                 was correct. Bonus points are awarded for the fastest player, and for the closest answer
                                 in a numbers question.
                             </li>
@@ -100,9 +107,19 @@
 
 <script>
 import HomeHero from '@frontend/components/HomeHero';
+import axios from 'axios';
 
 export default {
-    components: { HomeHero }
+    components: { HomeHero },
+
+    methods: {
+        hostGame() {
+            axios.post('/rooms')
+                .then((response) => {
+                    this.$router.push(`/${response.data.name}/host`);
+                });
+        }
+    }
 };
 </script>
 
@@ -171,7 +188,5 @@ export default {
             }
         }
     }
-
-
 }
 </style>

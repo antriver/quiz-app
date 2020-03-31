@@ -6,16 +6,13 @@ const createRouter = () => {
 
     const routes = [
         { path: '/', component: () => import('@frontend/views/HomeView.vue') },
-        { path: '/player', component: () => import('@frontend/views/PlayerView.vue') },
-        { path: '/host', component: () => import('@frontend/views/HostView.vue') },
-        { path: '/players', component: () => import('@frontend/views/PlayersView.vue') },
+        { path: '/:room/player', component: () => import('@frontend/views/PlayerView.vue') },
+        { path: '/:room/host', component: () => import('@frontend/views/HostView.vue') },
     ];
 
-    const router = new VueRouter({
-        routes // short for `routes: routes`
+    return new VueRouter({
+        routes
     });
-
-    return router;
 };
 
 export { createRouter };

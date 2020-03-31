@@ -1,5 +1,6 @@
 <template>
-    <div id="app">
+    <div id="app"
+         :key="$route.fullPath">
         <main>
             <router-view class="view" />
         </main>
@@ -19,8 +20,8 @@ export default {
 
     created() {
         // Create socket.io connection.
-        this.$root.$options.socket = io(
-            process.env.SOCKET_URL,
+        /*this.$root.$options.socket = io(
+            process.env.SERVER_URL,
             {
                 timeout: 1000,
                 transports: ['websocket']
@@ -38,7 +39,7 @@ export default {
         this.$root.$options.socket.on('roomUpdated', (room) => {
             this.room = new Room(room);
             this.$store.commit('setRoom', room);
-        });
+        });*/
     }
 };
 </script>

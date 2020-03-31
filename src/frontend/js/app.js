@@ -3,6 +3,9 @@ import VueAnalytics from 'vue-analytics';
 import App from './App.vue';
 import { createRouter } from '@frontend/router';
 import { createStore } from '@frontend/store';
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.SERVER_URL;
 
 const router = createRouter();
 const store = createStore();

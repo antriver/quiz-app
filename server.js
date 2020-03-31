@@ -4,6 +4,8 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 const socketIo = require('socket.io');
+const randomWords = require('random-words');
+const cors = require('cors');
 
 const Answer = require('./src/classes/Answer');
 const Player = require('./src/classes/Player');
@@ -18,6 +20,8 @@ const port = env.PORT;
 
 // Fire it up
 const expressApp = express();
+
+expressApp.use(cors());
 
 let httpServer;
 if (env.HTTPS === 'true') {
@@ -39,22 +43,30 @@ httpServer.listen(port, () => {
 
 expressApp.use(express.static('public'));
 
+expressApp.post('/rooms', (req, res) => {
+    const name = randomWords(3).join('-');
+    const room = new Room({
+        name
+    });
+    rooms[name] = room;
+    res.json(room);
+    res.end();
+});
+
 /**
  * Only one room is hard coded currently.
  * In future there could be multiple rooms.
  *
- * @type {Room[]}
+ * @type {Object<string, Room>}
  */
-const rooms = [
-    new Room({ name: 'Quiz' }),
-];
+const rooms = {
+    default: new Room({ name: 'quiz' })
+};
 
-const broadcastRoom = () => {
-    const room = rooms[0];
-
+const broadcastRoom = (room) => {
     // Instead of just emitting the room to all sockets we are going to iterate over the connected sockets,
     // because some users (the hosts) should receive the full data.
-    Object.values(io.sockets.connected).forEach((socket) => {
+    io.sockets.clients(room.name).forEach((socket) => {
         emitRoomToSocket(socket, room);
     });
 };
@@ -85,20 +97,28 @@ const emitRoomToSocket = (socket, room) => {
 // For each WebSocket connection.
 io.on('connection', (socket) => {
     console.log(socket.id, 'Connected', socket.request.connection.remoteAddress);
-    broadcastRoom();
 
     const registerPlayer = (data) => {
-        const room = rooms[0];
-
-        if (!room.players[data.id]) {
-            room.players[data.id] = new Player({ id: data.id, name: data.name });
+        const room = rooms[data.roomName];
+        if (!room) {
+            return;
         }
 
-        room.players[data.id].name = data.name;
-        room.players[data.id].rejoinedAt = new Date();
-        room.players[data.id].active = true;
-        room.players[data.id].leftAt = null;
-        room.players[data.id].websocketId = socket.id;
+        socket.join(room.name);
+
+        const playerData = data.player;
+
+        if (!room.players[playerData.id]) {
+            room.players[playerData.id] = new Player({ id: playerData.id, name: playerData.name });
+        }
+
+        room.players[playerData.id].name = playerData.name;
+        room.players[playerData.id].rejoinedAt = new Date();
+        room.players[playerData.id].active = true;
+        room.players[playerData.id].leftAt = null;
+        room.players[playerData.id].websocketId = socket.id;
+
+        broadcastRoom(room);
     };
 
     // When a new user joins.
@@ -109,7 +129,7 @@ io.on('connection', (socket) => {
         if (data) {
             registerPlayer(data);
 
-            const room = rooms[0];
+            const room = rooms.default;
             io.sockets.emit('newPlayer', {
                 player: room.players[data.id]
             });
@@ -135,7 +155,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        const room = rooms[0];
+        const room = rooms.default;
         const player = room.getPlayerByWebsocketId(socket.id);
 
         console.log(socket.id, 'Disconnect', player ? player.name : null);
@@ -159,7 +179,7 @@ io.on('connection', (socket) => {
 
     // TODO: Change to http endpoint?
     socket.on('questionAnswered', (data) => {
-        const room = rooms[0];
+        const room = rooms.default;
 
         console.log(socket.id, 'Question Answered', data.answer);
 
@@ -230,7 +250,7 @@ io.on('connection', (socket) => {
      */
 
     socket.on('becomeHost', (data, callback) => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'Become Host');
 
         if (room.hostWebsocketIds.indexOf(socket.id) === -1) {
@@ -244,21 +264,21 @@ io.on('connection', (socket) => {
     });
 
     socket.on('newQuestion', (data) => {
-        const room = rooms[0];
+        const room = rooms.default;
         room.currentQuestion = new Question(data);
         console.log(socket.id, 'New Question', JSON.stringify(room.currentQuestion));
         broadcastRoom();
     });
 
     socket.on('clearQuestion', () => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'Clear Question');
         room.currentQuestion = null;
         broadcastRoom();
     });
 
     socket.on('resetScores', () => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'Reset Scores');
         Object.values(room.players).forEach((player) => {
             player.score = 0;
@@ -267,14 +287,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('resetUsers', () => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'Reset Scores');
         room.players = {};
         broadcastRoom();
     });
 
     socket.on('startQuestion', (questionId) => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'Start Question', questionId);
         if (room.currentQuestion && questionId === room.currentQuestion.id) {
             room.currentQuestion.started = true;
@@ -285,7 +305,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('endQuestion', (questionId) => {
-        const room = rooms[0];
+        const room = rooms.default;
         console.log(socket.id, 'End Question', questionId);
         if (room.currentQuestion && questionId === room.currentQuestion.id) {
             room.currentQuestion.ended = true;

@@ -48,13 +48,7 @@ export default {
             window.localStorage.setItem('quiz-player-id', this.player.id);
             window.localStorage.setItem('quiz-player-name', this.player.name);
 
-            this.$root.$options.socket.emit(
-                'registerPlayer',
-                this.player,
-                () => {
-                    this.$emit('registered', this.player);
-                }
-            );
+            this.$emit('registered', this.player);
         }
     }
 };

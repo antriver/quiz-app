@@ -24,6 +24,7 @@
 <script>
 import AnswerInput from '../components/AnswerInput';
 import RegisterForm from '../components/RegisterForm';
+import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
 import { mapState } from 'vuex';
 
 export default {
@@ -33,6 +34,10 @@ export default {
         AnswerInput,
         RegisterForm
     },
+
+    mixins: [
+        WebsocketMixin
+    ],
 
     computed: {
         ...mapState(['player', 'room']),
@@ -67,20 +72,28 @@ export default {
     },
 
     created() {
-        this.$root.$options.socket.on('roomUpdated', () => {
+        console.log('create player view', this.$route.fullPath);
+
+        this.$options.socket.on('roomUpdated', () => {
             setTimeout(() => {
-                this.$root.$options.socket.emit(
+                this.$options.socket.emit(
                     'reRegisterPlayer',
-                    this.player
+                    {
+                        roomName: this.$route.params.room,
+                        player: this.player
+                    }
                 );
             }, 500);
         });
 
-        this.$root.$options.socket.on('connect', () => {
+        this.$options.socket.on('connect', () => {
             if (this.player) {
-                this.$root.$options.socket.emit(
+                this.$options.socket.emit(
                     'registerPlayer',
-                    this.player
+                    {
+                        roomName: this.$route.params.room,
+                        player: this.player
+                    }
                 );
             }
         });
@@ -91,8 +104,16 @@ export default {
          * @param {Player} player
          */
         registered(player) {
-            console.log('Player registered', player);
-            this.$store.commit('setPlayer', player);
+            this.$options.socket.emit(
+                'registerPlayer',
+                {
+                    roomName: this.$route.params.room,
+                    player
+                },
+                () => {
+                    this.$store.commit('setPlayer', player);
+                }
+            );
         },
 
         /**
@@ -100,7 +121,10 @@ export default {
          */
         answerChosen(answer) {
             console.log('answerChosen', answer);
-            this.$root.$options.socket.emit('questionAnswered', { answer, questionId: this.currentQuestion.id });
+            this.$options.socket.emit('questionAnswered', {
+                answer,
+                questionId: this.currentQuestion.id
+            });
         }
     }
 };
