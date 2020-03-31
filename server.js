@@ -232,7 +232,7 @@ io.on('connection', (socket) => {
     socket.on('newQuestion', (data) => {
         const room = rooms[0];
         room.currentQuestion = new Question(data);
-        console.log(socket.id, 'New Question', room.currentQuestion);
+        console.log(socket.id, 'New Question', JSON.stringify(room.currentQuestion));
         broadcastRoom();
     });
 
