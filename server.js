@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
     // When a new user joins.
     // Add them to the room and broadcast to everyone.
     socket.on('registerPlayer', (data, callback) => {
-        console.log(socket.id, 'Register Player', data);
+        console.log(socket.id, 'Register Player', data ? data.name : null);
 
         if (data) {
             registerPlayer(data);
@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
     // When a user is confirming they're still here.
     // Add them to the room but don't broadcast.
     socket.on('reRegisterPlayer', (data, callback) => {
-        console.log(socket.id, 'Re-Register Player', data);
+        console.log(socket.id, 'Re-Register Player', data ? data.name : null);
         if (data) {
             registerPlayer(data);
 
@@ -124,7 +124,7 @@ io.on('connection', (socket) => {
         const room = rooms[0];
         const player = room.getPlayerByWebsocketId(socket.id);
 
-        console.log(socket.id, 'Disconnect', player);
+        console.log(socket.id, 'Disconnect', player ? player.name : null);
 
         const index = room.hostWebsocketIds.indexOf(socket.id);
         if (index !== -1) {
@@ -147,7 +147,7 @@ io.on('connection', (socket) => {
     socket.on('questionAnswered', (data) => {
         const room = rooms[0];
 
-        console.log(socket.id, 'Question Answered', data);
+        console.log(socket.id, 'Question Answered', data.name, data.answer);
 
         const player = room.getPlayerByWebsocketId(socket.id);
         if (!player) {
