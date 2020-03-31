@@ -1,5 +1,7 @@
 const express = require('express');
+const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const path = require('path');
 const socketIo = require('socket.io');
 
@@ -15,7 +17,17 @@ const port = env.PORT;
 // Fire it up
 const expressApp = express();
 
-const httpServer = http.createServer(expressApp);
+let httpServer;
+if (env.HTTPS) {
+    const httpsCredentials = {
+        cert: fs.readFileSync(path.join(__dirname, 'ssl/cert.pem')),
+        key: fs.readFileSync(path.join(__dirname, 'ssl/key.pem'))
+    };
+    httpServer = https.createServer(httpsCredentials, expressApp);
+} else {
+    httpServer = http.createServer(expressApp);
+}
+
 const io = socketIo(httpServer);
 
 // Start HTTP server
