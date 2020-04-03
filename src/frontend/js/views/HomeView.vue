@@ -160,13 +160,13 @@ export default {
     }
 }
 
-@media (max-width: @screen-md-max) {
+@media (max-width: @screen-sm-max) {
     h2 {
         text-align: center;
     }
 }
 
-@media (min-width: @screen-lg) {
+@media (min-width: @screen-md) {
     #home {
         section {
             .container {
