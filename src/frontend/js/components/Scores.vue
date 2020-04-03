@@ -28,7 +28,7 @@
                     <td>
                         <a v-if="!player.active"
                            class="btn btn-danger btn-xs"
-                           @click.prevent="removePlayer(player.id)">
+                           @click.prevent="removePlayer(player)">
                             <i class="fas fa-trash" />
                         </a>
                     </td>
@@ -69,7 +69,9 @@ export default {
 
     methods: {
         removePlayer(playerId) {
-            this.$emit('remove-player', playerId);
+            if (window.confirm(`Are you sure you want to remove ${this.player.name}? Their score will be lost.`)) {
+                this.$emit('remove-player', playerId);
+            }
         }
     }
 };

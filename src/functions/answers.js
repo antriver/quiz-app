@@ -42,7 +42,7 @@ const calculateOnQuestionAnswered = (question, answer) => {
     question.addAnswer(answer);
 
     if (answer.player) {
-        answer.player.score -= answer.points;
+        answer.player.score += answer.points;
     }
 };
 
