@@ -68,9 +68,9 @@ export default {
     },
 
     methods: {
-        removePlayer(playerId) {
-            if (window.confirm(`Are you sure you want to remove ${this.player.name}? Their score will be lost.`)) {
-                this.$emit('remove-player', playerId);
+        removePlayer(player) {
+            if (window.confirm(`Are you sure you want to remove ${player.name}? Their score will be lost.`)) {
+                this.$emit('remove-player', player.id);
             }
         }
     }
