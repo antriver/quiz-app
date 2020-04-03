@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
                 }
             });
             console.log(Object.keys(rooms).length + ' active room(s).');
-        }, 1000);
+        }, 60000);
     });
 });
 
