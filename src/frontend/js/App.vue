@@ -1,45 +1,18 @@
 <template>
-    <div id="app"
-         :key="$route.fullPath">
-        <main>
+    <div id="app">
+        <Header v-if="$route.name !== 'home'" />
+        <main :key="$route.fullPath">
             <router-view class="view" />
         </main>
     </div>
 </template>
 
 <script>
-import io from 'socket.io-client';
-import Room from '@/classes/Room';
+import Header from './components/Header';
 
 export default {
-    data() {
-        return {
-            room: null
-        };
-    },
-
-    created() {
-        // Create socket.io connection.
-        /*this.$root.$options.socket = io(
-            process.env.SERVER_URL,
-            {
-                timeout: 1000,
-                transports: ['websocket']
-            }
-        );
-
-        this.$root.$options.socket.on('connect', () => {
-            console.log('Connected');
-        });
-
-        this.$root.$options.socket.on('disconnect', () => {
-            console.log('Disconnected');
-        });
-
-        this.$root.$options.socket.on('roomUpdated', (room) => {
-            this.room = new Room(room);
-            this.$store.commit('setRoom', room);
-        });*/
+    components: {
+        Header
     }
 };
 </script>

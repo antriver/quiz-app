@@ -1,4 +1,4 @@
-const { hydrate } = require('../funcs');
+const { hydrate } = require('../functions/utils');
 
 class Answer {
     constructor(data) {
@@ -28,9 +28,9 @@ class Answer {
         this.wasFirst = false;
 
         /**
-         * @type {boolean}
+         * @type {Boolean}
          */
-        this.wasClosest = false;
+        this.wasClosest = null;
 
         /**
          * @type {Number}

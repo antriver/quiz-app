@@ -9,6 +9,7 @@
                     <th class="text-center">
                         Score
                     </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +25,13 @@
                                                 class="label label-default">Disconnected</span>
                     </td>
                     <td>{{ player.score }}</td>
+                    <td>
+                        <a v-if="!player.active"
+                           class="btn btn-danger btn-xs"
+                           @click.prevent="removePlayer(player.id)">
+                            <i class="fas fa-trash" />
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -56,6 +64,12 @@ export default {
 
         playerCount() {
             return Object.values(this.room.players).length;
+        }
+    },
+
+    methods: {
+        removePlayer(playerId) {
+            this.$emit('remove-player', playerId);
         }
     }
 };

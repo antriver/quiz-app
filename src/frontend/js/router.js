@@ -5,12 +5,27 @@ const createRouter = () => {
     Vue.use(VueRouter);
 
     const routes = [
-        { path: '/', component: () => import('@frontend/views/HomeView.vue') },
-        { path: '/:room/player', component: () => import('@frontend/views/PlayerView.vue') },
-        { path: '/:room/host', component: () => import('@frontend/views/HostView.vue') },
+        {
+            name: 'home',
+            path: '/',
+            component: () => import('@frontend/views/HomeView.vue')
+        },
+        {
+            path: '/join',
+            component: () => import('@frontend/views/JoinView.vue')
+        },
+        {
+            path: '/:room',
+            component: () => import('@frontend/views/PlayerView.vue')
+        },
+        {
+            path: '/:room/host',
+            component: () => import('@frontend/views/HostView.vue')
+        }
     ];
 
     return new VueRouter({
+        mode: 'history',
         routes
     });
 };

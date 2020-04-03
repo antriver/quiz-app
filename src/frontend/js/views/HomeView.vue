@@ -71,15 +71,11 @@
                     <div class="col-md-12">
                         <div class="text-center"
                              style="margin: 30px">
-                            <a class="btn btn-primary btn-lg"
+                            <a class="btn btn-warning btn-lg"
                                href="#"
                                @click.prevent="hostGame">
                                 Host A Game
                             </a>
-                            <router-link class="btn btn-primary btn-lg"
-                                         to="/host">
-                                Host A Game
-                            </router-link>
                         </div>
 
                         <ul>
@@ -114,9 +110,9 @@ export default {
 
     methods: {
         hostGame() {
-            axios.post('/rooms')
+            axios.post('/api/rooms')
                 .then((response) => {
-                    this.$router.push(`/${response.data.name}/host`);
+                    this.$router.push(`/${response.data.code}/host`);
                 });
         }
     }

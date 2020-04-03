@@ -1,4 +1,4 @@
-const { hydrate } = require('../funcs');
+const { hydrate } = require('../functions/utils');
 
 class Question {
     constructor(data = {}) {
@@ -50,6 +50,13 @@ class Question {
      */
     addAnswer(answer) {
         this.answers[answer.player.id] = answer;
+    }
+
+    /**
+     * @return {Answer[]}
+     */
+    getAnswers() {
+        return Object.values(this.answers);
     }
 
     /**

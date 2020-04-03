@@ -1,70 +1,93 @@
 <template>
     <div v-if="isHost"
          id="host">
-        <!-- If a question has been created and the answer entered. -->
-        <div v-if="roomQuestion"
-             class="text-center">
-            <h3 v-if="!roomQuestion.started">
-                Question Ready
-            </h3>
-            <h3 v-else-if="!roomQuestion.ended">
-                Question Started
-            </h3>
-            <h3 v-else>
-                Question Ended
-            </h3>
+        <div id="left">
 
-            <p>
-                <strong>Correct Answer:</strong> {{ roomQuestion.answer }}
-            </p>
-
-            <div v-if="!roomQuestion.started">
-                <a class="btn btn-success btn-lg"
-                   @click.prevent="startQuestion">Start Answering</a>
-            </div>
-            <div v-else-if="!roomQuestion.ended">
-                <a class="btn btn-danger btn-lg"
-                   @click.prevent="endQuestion">Stop Answering</a>
-            </div>
-            <div v-else>
-                <a class="btn btn-warning btn-lg"
-                   @click.prevent="clearQuestion">Next Question</a>
+            <div id="room-code">
+                <div class="alert alert-info">
+                    Your room code is <strong>{{ room.code }}</strong>. Players will need this to join or they can use this link:
+                    <br/>
+                    <input type="text"
+                           class="form-control"
+                           readonly
+                           :value="'https://questicals.com/' + room.code" />
+                </div>
             </div>
 
-            <div v-if="roomQuestion.started">
-                <h3>Answers</h3>
-                <Answers />
+            <div class="container">
+
+                <!-- If a question has been created and the answer entered. -->
+                <div v-if="roomQuestion"
+                     class="text-center">
+                    <h2 v-if="!roomQuestion.started">
+                        Question Ready To Answer
+                    </h2>
+                    <h2 v-else-if="!roomQuestion.ended">
+                        Question Is Being Answered
+                    </h2>
+                    <h2 v-else>
+                        Answering Finished
+                    </h2>
+
+                    <p>
+                        <strong>Correct Answer:</strong> {{ roomQuestion.answer }}
+                    </p>
+
+                    <div v-if="!roomQuestion.started">
+                        <a class="btn btn-success btn-lg"
+                           @click.prevent="startQuestion">Start Answering</a>
+                    </div>
+                    <div v-else-if="!roomQuestion.ended">
+                        <a class="btn btn-danger btn-lg"
+                           @click.prevent="endQuestion">Stop Answering</a>
+                    </div>
+                    <div v-else>
+                        <a class="btn btn-warning btn-lg"
+                           @click.prevent="clearQuestion">Next Question</a>
+                    </div>
+
+                    <div v-if="roomQuestion.started" id="answers">
+                        <h3>Answers</h3>
+                        <Answers />
+                    </div>
+                </div>
+
+                <!-- If a question has been created but the answer entered. -->
+                <template v-else-if="nextQuestion">
+                    <AnswerInput title="Provide the correct answer."
+                                 :question-type="nextQuestion.type"
+                                 :question="nextQuestion"
+                                 :active="true"
+                                 @choice="setCorrectAnswer"></AnswerInput>
+                </template>
+
+                <!-- If no question has been created. -->
+                <div v-else
+                     id="new-question-btns">
+                    <a class="btn btn-primary btn-lg"
+                       @click.prevent="newQuestion('letters')">New Letters Question</a>
+
+                    <a class="btn btn-primary btn-lg"
+                       @click.prevent="newQuestion('multiple')">New Multiple Choice Question</a>
+
+                    <a class="btn btn-primary btn-lg"
+                       @click.prevent="newQuestion('numbers')">New Numbers Question</a>
+                </div>
             </div>
         </div>
 
-        <!-- If a question has been created but the answer entered. -->
-        <template v-else-if="nextQuestion">
-            <AnswerInput title="Provide the correct answer."
-                         :question-type="nextQuestion.type"
-                         :question="nextQuestion"
-                         :active="true"
-                         @choice="setCorrectAnswer"></AnswerInput>
-        </template>
+        <div id="right">
+            <div class="container">
+                <Scores @remove-player="removePlayer" />
 
-        <!-- If no question has been created. -->
-        <div v-else
-             id="new-question-btns">
-            <a class="btn btn-primary btn-lg"
-               @click.prevent="newQuestion('letters')">New Letters Question</a>
+                <div class="text-center">
+                    <a class="btn btn-sm btn-danger"
+                       @click.prevent="resetScores">Reset Scores</a>
 
-            <a class="btn btn-primary btn-lg"
-               @click.prevent="newQuestion('multiple')">New Multiple Choice Question</a>
-
-            <a class="btn btn-primary btn-lg"
-               @click.prevent="newQuestion('numbers')">New Numbers Question</a>
-
-            <Scores />
-
-            <a class="btn btn-sm btn-danger"
-               @click.prevent="resetScores">Reset Scores</a>
-
-            <a class="btn btn-sm btn-danger"
-               @click.prevent="resetPlayers">Reset Players</a>
+                    <a class="btn btn-sm btn-danger"
+                       @click.prevent="resetPlayers">Reset Players</a>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -73,12 +96,22 @@
 import Answers from '../components/Answers';
 import AnswerInput from '../components/AnswerInput';
 import Question from '@/classes/Question';
-import { generateId } from '@/funcs';
+import { generateId } from '@/functions/utils';
 import { mapState } from 'vuex';
 import Scores from '@frontend/components/Scores';
+import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
+import { validateRoom } from '@frontend/functions/rooms';
 
 export default {
-    components: { Scores, AnswerInput, Answers },
+    components: {
+        Scores,
+        AnswerInput,
+        Answers
+    },
+
+    mixins: [
+        WebsocketMixin
+    ],
 
     data() {
         return {
@@ -86,6 +119,8 @@ export default {
              * @type {?Question}
              */
             nextQuestion: null,
+
+            validRoom: null,
 
             isHost: false
         };
@@ -100,25 +135,36 @@ export default {
 
         players() {
             // Return only currently connected users, or those that have answered.
-            return Object.values(this.room.players).filter(
-                (p) => p.active || this.room.currentQuestion.answers.hasOwnProperty(p.id)
-            );
+            return Object.values(this.room.players)
+                .filter(
+                    (p) => p.active || this.room.currentQuestion.answers.hasOwnProperty(p.id)
+                );
         }
     },
 
     created() {
-        // Tell the server this socket will be a host and should receive more info.
-        // Hide the UI until we know this is done.
-        this.$root.$options.socket.emit('becomeHost', {}, () => {
-            this.isHost = true;
-        });
+        validateRoom(this.$route.params.room)
+            .then(() => {
+                this.validRoom = true;
 
-        this.$root.$options.socket.on('connect', () => {
-            this.isHost = false;
-            this.$root.$options.socket.emit('becomeHost', {}, () => {
-                this.isHost = true;
+                this.createSocket();
+
+                // Tell the server this socket will be a host and should receive more info.
+                // Hide the UI until we know this is done.
+                this.$options.socket.emit('becomeHost', {}, () => {
+                    this.isHost = true;
+                });
+
+                this.$options.socket.on('connect', () => {
+                    this.isHost = false;
+                    this.$options.socket.emit('becomeHost', {}, () => {
+                        this.isHost = true;
+                    });
+                });
+            })
+            .catch(() => {
+                this.validRoom = false;
             });
-        });
     },
 
     methods: {
@@ -133,34 +179,40 @@ export default {
         setCorrectAnswer(answer) {
             this.nextQuestion.answer = answer;
 
-            this.$root.$options.socket.emit('newQuestion', this.nextQuestion);
+            this.$options.socket.emit('newQuestion', this.nextQuestion);
         },
 
         startQuestion() {
-            this.$root.$options.socket.emit('startQuestion', this.roomQuestion.id);
+            this.$options.socket.emit('startQuestion', this.roomQuestion.id);
         },
 
         endQuestion() {
-            this.$root.$options.socket.emit('endQuestion', this.roomQuestion.id);
+            this.$options.socket.emit('endQuestion', this.roomQuestion.id);
         },
 
         clearQuestion() {
-            this.$root.$options.socket.emit('clearQuestion');
+            this.$options.socket.emit('clearQuestion');
             this.nextQuestion = null;
         },
 
         resetScores() {
-            this.$root.$options.socket.emit('resetScores');
+            this.$options.socket.emit('resetScores');
         },
 
         resetPlayers() {
-            this.$root.$options.socket.emit('resetUsers');
+            this.$options.socket.emit('resetUsers');
+        },
+
+        removePlayer(playerId) {
+            this.$options.socket.emit('removePlayer', playerId);
         }
     }
 };
 </script>
 
 <style lang="less">
+@import (less, reference) "../../less/app.less";
+
 #new-question-btns {
     padding: 10px;
     text-align: center;
@@ -168,6 +220,82 @@ export default {
 
     .btn {
         margin: 5px;
+    }
+}
+
+@media (min-width: @screen-md-min) {
+    #host {
+        overflow: auto;
+        position: relative;
+        height: ~"calc(100vh - @{header-height})"; // 45px is header height.
+
+        h2,
+        h3 {
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        #left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            max-width: none;
+            width: 70%;
+
+            #room-code {
+                padding: 15px;
+                flex-grow: 0;
+                flex-shrink: 0;
+                width: 100%;
+                text-align: center;
+
+                .alert {
+                    margin: 0;
+                }
+            }
+
+            > .container {
+                flex-grow: 1;
+                flex-shrink: 1;
+            }
+        }
+
+        #right {
+            width: 30%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+
+            h3 {
+                margin: 0 0 15px 0;
+            }
+
+            .scores {
+                margin: 0 0 15px 0;
+            }
+        }
+
+        .container {
+            width: auto;
+        }
+
+        #answers {
+            margin-top: 45px;
+            min-width: 600px;
+
+            .answers {
+                margin-top: 0;
+            }
+        }
     }
 }
 </style>

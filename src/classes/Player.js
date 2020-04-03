@@ -1,4 +1,4 @@
-const { hydrate } = require('../funcs');
+const { hydrate } = require('../functions/utils');
 
 class Player {
     constructor(data = {}) {
@@ -18,19 +18,9 @@ class Player {
         this.joinedAt = new Date();
 
         /**
-         * @type {Date}
-         */
-        this.rejoinedAt = new Date();
-
-        /**
          * @type {boolean}
          */
         this.active = true;
-
-        /**
-         * @type {?Date}
-         */
-        this.leftAt = null;
 
         /**
          * @type {String}

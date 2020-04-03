@@ -64,6 +64,14 @@ export default {
             });
 
             answers.sort((a, b) => {
+                if (a.player.name === b.player.name) {
+                    return 0;
+                }
+
+                return a.player.name < b.player.name ? -1 : 1;
+            });
+
+            /*answers.sort((a, b) => {
                 if (a.answeredAt && b.answeredAt) {
                     return a.answeredAt > b.answeredAt ? 1 : -1;
                 } else if (a.answeredAt) {
@@ -73,7 +81,7 @@ export default {
                 }
 
                 return a.player.name < b.player.name;
-            });
+            });*/
 
             return answers;
         }

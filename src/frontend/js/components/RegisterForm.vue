@@ -7,7 +7,7 @@
                class="input form-control text-center input-lg"
                placeholder="What's your name?" />
         <button type="submit"
-                class="btn btn-primary btn-lg">
+                class="btn btn-warning btn-lg">
             Let's Play
         </button>
     </form>
@@ -15,10 +15,7 @@
 
 <script>
 import Player from '@/classes/Player';
-
-const { generateId } = require('@/funcs');
-
-console.log('player', new Player());
+const { generateId } = require('@/functions/utils');
 
 export default {
     name: 'RegisterForm',

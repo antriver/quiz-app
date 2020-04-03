@@ -4,7 +4,21 @@
              id="corner-img"
              src="/assets/img/question.png" />
 
-        <template v-if="!isRegisteredPlayer">
+        <template v-if="validRoom === null">
+            <i class="fas fa-spinner fa-spin" />
+        </template>
+        <template v-else-if="validRoom === false">
+            <div>
+                <div class="alert alert-danger">
+                    This doesn't look like a link to a valid room.
+                </div>
+                <router-link class="btn btn-warning btn-lg"
+                             to="/join">
+                    Try A Different Code
+                </router-link>
+            </div>
+        </template>
+        <template v-else-if="!isRegisteredPlayer">
             <RegisterForm @registered="registered" />
         </template>
         <template v-else>
@@ -26,6 +40,7 @@ import AnswerInput from '../components/AnswerInput';
 import RegisterForm from '../components/RegisterForm';
 import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
 import { mapState } from 'vuex';
+import { validateRoom } from '@frontend/functions/rooms';
 
 export default {
     name: 'PlayerView',
@@ -38,6 +53,12 @@ export default {
     mixins: [
         WebsocketMixin
     ],
+
+    data() {
+        return {
+            validRoom: null
+        };
+    },
 
     computed: {
         ...mapState(['player', 'room']),
@@ -72,31 +93,33 @@ export default {
     },
 
     created() {
-        console.log('create player view', this.$route.fullPath);
+        validateRoom(this.$route.params.room)
+            .then(() => {
+                this.validRoom = true;
 
-        this.$options.socket.on('roomUpdated', () => {
-            setTimeout(() => {
-                this.$options.socket.emit(
-                    'reRegisterPlayer',
-                    {
-                        roomName: this.$route.params.room,
-                        player: this.player
-                    }
-                );
-            }, 500);
-        });
+                this.createSocket();
 
-        this.$options.socket.on('connect', () => {
-            if (this.player) {
-                this.$options.socket.emit(
-                    'registerPlayer',
-                    {
-                        roomName: this.$route.params.room,
-                        player: this.player
+                this.$options.socket.on('roomUpdated', () => {
+                    setTimeout(() => {
+                        this.$options.socket.emit(
+                            'reRegisterPlayer',
+                            this.player
+                        );
+                    }, 500);
+                });
+
+                this.$options.socket.on('connect', () => {
+                    if (this.player) {
+                        this.$options.socket.emit(
+                            'registerPlayer',
+                            this.player
+                        );
                     }
-                );
-            }
-        });
+                });
+            })
+            .catch(() => {
+                this.validRoom = false;
+            });
     },
 
     methods: {
@@ -106,10 +129,7 @@ export default {
         registered(player) {
             this.$options.socket.emit(
                 'registerPlayer',
-                {
-                    roomName: this.$route.params.room,
-                    player
-                },
+                player,
                 () => {
                     this.$store.commit('setPlayer', player);
                 }
@@ -120,7 +140,6 @@ export default {
          * @param {string} answer
          */
         answerChosen(answer) {
-            console.log('answerChosen', answer);
             this.$options.socket.emit('questionAnswered', {
                 answer,
                 questionId: this.currentQuestion.id

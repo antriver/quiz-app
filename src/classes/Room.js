@@ -1,11 +1,11 @@
-const { hydrate } = require('../funcs');
+const { hydrate } = require('../functions/utils');
 
 class Room {
     constructor(data = {}) {
         /**
          * @type {string}
          */
-        this.name = '';
+        this.code = '';
 
         /**
          * @type {Object<Player>}

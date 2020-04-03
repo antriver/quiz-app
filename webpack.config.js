@@ -149,7 +149,8 @@ const webpackConfig = {
 webpackConfig.devServer = {
     contentBase: path.join(__dirname, '/public/'),
     host: '0.0.0.0',
-    publicPath: webpackConfig.output.publicPath
+    publicPath: webpackConfig.output.publicPath,
+    historyApiFallback: true
 };
 
 module.exports = webpackConfig;

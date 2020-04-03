@@ -14,7 +14,7 @@
                         Ready to play?..
                         <br />
                         <router-link class="btn btn-primary btn-lg pulse"
-                                     to="/player">
+                                     to="/join">
                             Join a Game
                         </router-link>
                     </div>
