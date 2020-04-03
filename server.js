@@ -93,7 +93,6 @@ io.on('connection', (socket) => {
  */
 expressApp.get('/api/rooms/:code', (req, res) => {
     const code = req.params.code;
-    console.log('code', code);
     if (!code || !rooms.hasOwnProperty(code)) {
         res.status(404);
         res.end();
@@ -111,7 +110,6 @@ expressApp.post('/api/rooms', (req, res) => {
     }
     const serverRoom = createRoom(code);
     serverRoom.hostPassword = crypto.randomBytes(16).toString('hex');
-    console.log('serverRoom.hostPassword', serverRoom.hostPassword);
     res.json({
         password: serverRoom.hostPassword,
         room: sanitizeRoom(serverRoom.room)
