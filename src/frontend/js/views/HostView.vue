@@ -242,10 +242,7 @@ export default {
             justify-content: center;
             flex-direction: column;
 
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
+            float:left;
             max-width: none;
             width: 70%;
 
@@ -269,10 +266,7 @@ export default {
 
         #right {
             width: 30%;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
+            float:right;
             background: #fff;
 
             h3 {
