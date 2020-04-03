@@ -19,7 +19,7 @@ const createRouter = () => {
             component: () => import('@frontend/views/PlayerView.vue')
         },
         {
-            path: '/:room/host',
+            path: '/:room/host/:password',
             component: () => import('@frontend/views/HostView.vue')
         }
     ];

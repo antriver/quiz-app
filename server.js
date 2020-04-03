@@ -1,12 +1,13 @@
+const cors = require('cors');
+const crypto = require('crypto');
 const express = require('express');
 const fs = require('fs');
+const history = require('connect-history-api-fallback');
 const http = require('http');
 const https = require('https');
 const path = require('path');
-const socketIo = require('socket.io');
 const randomWords = require('random-words');
-const cors = require('cors');
-const history = require('connect-history-api-fallback');
+const socketIo = require('socket.io');
 
 const Room = require('./src/classes/Room');
 const ServerRoom = require('./src/classes/ServerRoom');
@@ -109,6 +110,11 @@ expressApp.post('/api/rooms', (req, res) => {
         code = randomWords(2).join('-');
     }
     const serverRoom = createRoom(code);
-    res.json(sanitizeRoom(serverRoom.room));
+    serverRoom.hostPassword = crypto.randomBytes(16).toString('hex');
+    console.log('serverRoom.hostPassword', serverRoom.hostPassword);
+    res.json({
+        password: serverRoom.hostPassword,
+        room: sanitizeRoom(serverRoom.room)
+    });
     res.end();
 });

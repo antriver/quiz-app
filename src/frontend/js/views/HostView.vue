@@ -5,12 +5,15 @@
 
             <div id="room-code">
                 <div class="alert alert-info">
-                    Your room code is <strong>{{ room.code }}</strong>. Players will need this to join or they can use this link:
-                    <br/>
+                    Your room code is <strong>{{ room.code }}</strong>. Players will need this to join, or they can use
+                    this link:
+                    <br />
                     <input type="text"
-                           class="form-control"
+                           class="form-control text-center"
                            readonly
                            :value="'https://questicals.com/' + room.code" />
+                    The page you are currently on is the only way to host the room.
+                    Bookmark it if you don't want to lose it!
                 </div>
             </div>
 
@@ -149,17 +152,24 @@ export default {
 
                 this.createSocket();
 
-                // Tell the server this socket will be a host and should receive more info.
-                // Hide the UI until we know this is done.
-                this.$options.socket.emit('becomeHost', {}, () => {
-                    this.isHost = true;
-                });
+                const becomeHost = () => {
+                    // Tell the server this socket will be a host and should receive more info.
+                    // Hide the UI until we know this is done.
+                    this.$options.socket.emit(
+                        'becomeHost',
+                        {
+                            password: this.$route.params.password
+                        },
+                        (result) => {
+                            this.isHost = result;
+                        }
+                    );
+                };
+                becomeHost();
 
                 this.$options.socket.on('connect', () => {
                     this.isHost = false;
-                    this.$options.socket.emit('becomeHost', {}, () => {
-                        this.isHost = true;
-                    });
+                    becomeHost();
                 });
             })
             .catch(() => {
@@ -242,7 +252,7 @@ export default {
             justify-content: center;
             flex-direction: column;
 
-            float:left;
+            float: left;
             max-width: none;
             width: 70%;
 
@@ -266,7 +276,7 @@ export default {
 
         #right {
             width: 30%;
-            float:right;
+            float: right;
             background: #fff;
 
             h3 {

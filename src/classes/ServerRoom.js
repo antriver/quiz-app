@@ -16,6 +16,11 @@ class ServerRoom {
         this.room = room;
 
         /**
+         * @type {string}
+         */
+        this.hostPassword = '';
+
+        /**
          * @type {ParentNamespace}
          */
         this.nsp = io.of('/' + room.code);
@@ -136,13 +141,18 @@ class ServerRoom {
             socket.on('becomeHost', (data, callback) => {
                 console.log(socket.id, 'Become Host');
 
+                if (data.password !== this.hostPassword) {
+                    callback(false);
+                    return;
+                }
+
                 if (room.hostWebsocketIds.indexOf(socket.id) === -1) {
                     room.hostWebsocketIds.push(socket.id);
                 }
 
                 this.broadcast();
                 if (typeof callback === 'function') {
-                    callback();
+                    callback(true);
                 }
             });
 

@@ -112,7 +112,7 @@ export default {
         hostGame() {
             axios.post('/api/rooms')
                 .then((response) => {
-                    this.$router.push(`/${response.data.code}/host`);
+                    this.$router.push(`/${response.data.room.code}/host/${response.data.password}`);
                 });
         }
     }
