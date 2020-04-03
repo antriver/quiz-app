@@ -95,7 +95,7 @@ export default {
     }
 }
 
-@media (min-width: @screen-lg) {
+@media (min-width: @screen-md) {
     #home-hero {
         display: flex;
         align-items: stretch;
