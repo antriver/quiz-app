@@ -68,6 +68,23 @@ createRoom('quiz');
 // For each WebSocket connection.
 io.on('connection', (socket) => {
     console.log(socket.id, 'Connected default', socket.request.connection.remoteAddress);
+
+    socket.on('disconnect', () => {
+        console.log(socket.id, 'Disconnect');
+        setTimeout(() => {
+            // Kill any now empty rooms.
+            Object.values(rooms).forEach((room) => {
+                if (
+                    Object.values(room.room.players).filter((p) => p.active).length < 1
+                    && room.room.hostWebsocketIds.length < 1
+                ) {
+                    console.log('Deleting empty room ' + room.room.code);
+                    delete rooms[room.room.code];
+                }
+            });
+            console.log(Object.keys(rooms).length + ' active room(s).');
+        }, 1000);
+    });
 });
 
 /**

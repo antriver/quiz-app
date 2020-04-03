@@ -40,7 +40,7 @@ class ServerRoom {
             // When a new user joins.
             // Add them to the room and broadcast to everyone.
             socket.on('registerPlayer', (data, callback) => {
-                //console.log(socket.id, 'Register Player', data);
+                // console.log(socket.id, 'Register Player', data);
                 if (data) {
                     registerPlayer(data);
 
@@ -54,7 +54,7 @@ class ServerRoom {
             // When a user is confirming they're still here.
             // Add them to the room but don't broadcast.
             socket.on('reRegisterPlayer', (data, callback) => {
-                //console.log(socket.id, 'Re-Register Player', data);
+                // console.log(socket.id, 'Re-Register Player', data);
                 if (data) {
                     registerPlayer(data);
 
