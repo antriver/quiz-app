@@ -10,9 +10,9 @@
                         Get together with your friends get together on Skype, Google Hangots, Zoom, or another video
                         chat service.
                     </li>
-                    <li>Your quizmaster / host will start a game and tell you a password to join.</li>
+                    <li>Your quizmaster / host will start a room and give you a link to join.</li>
                     <li>Your hosts reads questions aloud and sends the question to your device.</li>
-                    <li>Answer by pressing the first letter of the answer.</li>
+                    <li>Answer by pressing the first letter of the answer for letter or multiple choice questions, or by typing in your answer for number questions.</li>
                     <li>There are bonus points for being the first person to get the answer correct!</li>
                 </ul>
             </div>
@@ -28,7 +28,7 @@
                     </div>
 
                     <div>
-                        <i class="fas fa-sort-numeric-up fa-4x"></i>
+                        <i class="fas fa-calculator fa-4x"></i>
                         <h3>Number Questions</h3>
                         <p>Players enter the answer on a number pad for 2 points.</p>
                     </div>

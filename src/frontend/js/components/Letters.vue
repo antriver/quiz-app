@@ -1,14 +1,18 @@
 <template>
     <div class="letters"
          :class="multipleChoice ? 'multiple-choice' : ''">
-        <a v-for="letter in letters"
-           :key="letter"
-           class="btn"
-           :disabled="!active || selectedOption"
-           :class="[
-               selectedOption === letter ? 'btn-info active' : 'btn-primary'
-           ]"
-           @click="click(letter)">{{ letter }}</a>
+        <template v-for="letter in letters">
+            <a v-if="letter"
+               :key="letter"
+               class="btn"
+               :disabled="!active || selectedOption"
+               :class="[
+                   selectedOption === letter ? 'btn-info active' : 'btn-primary'
+               ]"
+               @click="click(letter)">{{ letter }}</a>
+            <span v-else
+                  :key="letter"></span>
+        </template>
     </div>
 </template>
 
@@ -31,21 +35,24 @@ const allLetters = [
     'N',
     'O',
     'P',
+    'Q',
     'R',
     'S',
     'T',
     'U',
-    'Q V',
+    'V',
     'W',
+    'X',
+    '',
     'Y',
-    'X Z',
+    'Z',
 ];
 
 const multipleChoiceLetters = [
     'A',
     'B',
     'C',
-    'D',
+    'D'
 ];
 
 export default {
@@ -102,7 +109,7 @@ export default {
     display: grid;
     grid-gap: 5px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     overflow: hidden;
 
     &.multiple-choice {

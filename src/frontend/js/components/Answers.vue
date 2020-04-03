@@ -9,6 +9,11 @@
                 </tr>
             </thead>
             <tbody>
+                <tr v-if="answers.length < 1">
+                    <td colspan="3">
+                        No players have joined yet.
+                    </td>
+                </tr>
                 <tr v-for="answer in answers"
                     :key="answer.player.id">
                     <td>

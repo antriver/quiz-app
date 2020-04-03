@@ -15,7 +15,6 @@ body {
 }
 
 #join,
-//#host,
 #player {
     height: ~"calc(100vh - @{header-height})"; // 45px is header height.
     display: flex;
@@ -35,17 +34,43 @@ body {
     background: #fff;
     border: 1px #ddd solid;
     border-radius: 3px;
-    margin: 30px 0;
+    margin: 30px 0 15px;
 
     .table {
         margin: 0;
 
         td,
         th {
-            width: 50%;
             text-align: center;
             vertical-align: middle;
         }
+
+        th:first-child,
+        td:first-child {
+            text-align: left;
+            width: 50%;
+        }
+
+        .btn.hide {
+            opacity: 0;
+        }
+    }
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: relative;
+    top: 1px;
+
+    &.dot-success {
+        background: @brand-success;
+    }
+
+    &.dot-danger {
+        background: @brand-danger;
     }
 }
 

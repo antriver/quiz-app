@@ -5,15 +5,12 @@
 
             <div id="room-code">
                 <div class="alert alert-info">
-                    Your room code is <strong>{{ room.code }}</strong>. Players will need this to join, or they can use
-                    this link:
-                    <br />
+                    <p>Your room code is <strong>{{ room.code }}</strong>. Players can join with this link:</p>
                     <input type="text"
                            class="form-control text-center"
                            readonly
                            :value="'https://questicals.com/' + room.code" />
-                    The page you are currently on is the only way to host the room.
-                    Bookmark it if you don't want to lose it!
+                    <p>The page you are currently on is the only way to host the room. Bookmark it if you don't want to lose it!</p>
                 </div>
             </div>
 
@@ -21,35 +18,43 @@
 
                 <!-- If a question has been created and the answer entered. -->
                 <div v-if="roomQuestion"
-                     class="text-center">
-                    <h2 v-if="!roomQuestion.started">
-                        Question Ready To Answer
-                    </h2>
-                    <h2 v-else-if="!roomQuestion.ended">
-                        Question Is Being Answered
-                    </h2>
-                    <h2 v-else>
-                        Answering Finished
-                    </h2>
+                     id="question-status">
+
+                    <template v-if="!roomQuestion.started">
+                        <h2>Question Ready To Answer</h2>
+                        <p>The buttons are visible on player's screens but are disabled. The buttons will be enabled when you click Start.</p>
+                    </template>
+                    <template v-else-if="!roomQuestion.ended">
+                        <h2>Question Is Being Answered</h2>
+                        <p>The buttons are visible and enabled on players' screens. Players can enter their answers right now.</p>
+                    </template>
+                    <template v-else>
+                        <h2>Answering Finished</h2>
+                        <p>The buttons are no longer visible on player's screens.</p>
+                    </template>
 
                     <p>
-                        <strong>Correct Answer:</strong> {{ roomQuestion.answer }}
+                        <strong>Correct Answer:</strong>
+                        <span class="label label-warning">{{ roomQuestion.answer }}</span>
                     </p>
 
                     <div v-if="!roomQuestion.started">
                         <a class="btn btn-success btn-lg"
-                           @click.prevent="startQuestion">Start Answering</a>
+                           @click.prevent="startQuestion"><i class="fas fa-play"></i> Start Answering</a>
                     </div>
                     <div v-else-if="!roomQuestion.ended">
                         <a class="btn btn-danger btn-lg"
-                           @click.prevent="endQuestion">Stop Answering</a>
+                           @click.prevent="endQuestion"><i class="fas fa-stop"></i> Stop Answering</a>
                     </div>
                     <div v-else>
                         <a class="btn btn-warning btn-lg"
-                           @click.prevent="clearQuestion">Next Question</a>
+                           @click.prevent="clearQuestion"><i class="fas fa-arrow-right"></i> Next Question</a>
                     </div>
 
-                    <div v-if="roomQuestion.started" id="answers">
+                    <hr v-if="roomQuestion.started"/>
+
+                    <div v-if="roomQuestion.started"
+                         id="answers">
                         <h3>Answers</h3>
                         <Answers />
                     </div>
@@ -67,20 +72,23 @@
                 <!-- If no question has been created. -->
                 <div v-else
                      id="new-question-btns">
-                    <a class="btn btn-primary btn-lg"
-                       @click.prevent="newQuestion('letters')">New Letters Question</a>
+                    <a class="btn btn-warning btn-lg"
+                       @click.prevent="newQuestion('letters')"><i class="fas fa-text"></i> New Letter Question</a>
 
-                    <a class="btn btn-primary btn-lg"
-                       @click.prevent="newQuestion('multiple')">New Multiple Choice Question</a>
+                    <a class="btn btn-warning btn-lg"
+                       @click.prevent="newQuestion('multiple')"><i class="fas fa-check-square"></i> New Multiple Choice Question</a>
 
-                    <a class="btn btn-primary btn-lg"
-                       @click.prevent="newQuestion('numbers')">New Numbers Question</a>
+                    <a class="btn btn-warning btn-lg"
+                       @click.prevent="newQuestion('numbers')"><i class="fas fa-calculator"></i> New Number Question</a>
                 </div>
             </div>
         </div>
 
         <div id="right">
             <div class="container">
+
+                <h3 class="hidden-md hidden-lg text-center">Scores</h3>
+
                 <Scores @remove-player="removePlayer" />
 
                 <div class="text-center">
@@ -113,7 +121,7 @@ export default {
     },
 
     mixins: [
-        WebsocketMixin
+        WebsocketMixin,
     ],
 
     data() {
@@ -233,11 +241,42 @@ export default {
     }
 }
 
+#room-code {
+    .alert {
+        margin: 0;
+        text-align: center;
+
+        input {
+            margin: 5px;
+        }
+    }
+}
+
+#host {
+    hr {
+        margin: 30px 0;
+    }
+}
+
+#question-status {
+    background: #fff;
+    border: 1px #ddd solid;
+    padding: 15px;
+    border-radius: @border-radius-base;
+    text-align: center;
+
+    > :first-child {
+        margin-top: 0;
+    }
+}
+
 @media (min-width: @screen-md-min) {
     #host {
         overflow: auto;
         position: relative;
-        height: ~"calc(100vh - @{header-height})"; // 45px is header height.
+        height: ~"calc(100vh - @{header-height})";
+        max-width: 1170px;
+        margin: auto;
 
         h2,
         h3 {
@@ -279,6 +318,10 @@ export default {
             float: right;
             background: #fff;
 
+            .container {
+                padding-left: 0;
+            }
+
             h3 {
                 margin: 0 0 15px 0;
             }
@@ -293,7 +336,7 @@ export default {
         }
 
         #answers {
-            margin-top: 45px;
+            margin-top: 15px;
             min-width: 600px;
 
             .answers {

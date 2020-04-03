@@ -14,20 +14,23 @@
             </thead>
             <tbody>
                 <tr v-if="playerCount < 1">
-                    <td colspan="2">
-                        No players.
+                    <td colspan="3">
+                        No players have joined yet.
                     </td>
                 </tr>
                 <tr v-for="player in players"
                     :key="player.id">
                     <td>
-                        {{ player.name }} <span v-if="!player.active"
-                                                class="label label-default">Disconnected</span>
+                        <span v-if="player.active"
+                              class="dot dot-success"> </span>
+                        <span v-else
+                              class="dot dot-danger"> </span>
+                        {{ player.name }}
                     </td>
                     <td>{{ player.score }}</td>
                     <td>
-                        <a v-if="!player.active"
-                           class="btn btn-danger btn-xs"
+                        <a class="btn btn-danger btn-xs"
+                           :class="[player.active ? 'hide' : '']"
                            @click.prevent="removePlayer(player)">
                             <i class="fas fa-trash" />
                         </a>
@@ -76,21 +79,3 @@ export default {
     }
 };
 </script>
-
-<style lang="less">
-.scores {
-    background: #fff;
-    border: 1px #ddd solid;
-    border-radius: 3px;
-    margin: 30px 0;
-
-    .table {
-        margin: 0;
-
-        td {
-            width: 50%;
-            vertical-align: middle;
-        }
-    }
-}
-</style>
