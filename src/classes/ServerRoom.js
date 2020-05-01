@@ -1,6 +1,7 @@
 const Answer = require('./Answer');
 const Player = require('./Player');
 const Question = require('./Question');
+const { hydrate } = require('../functions/utils');
 const { calculateOnQuestionAnswered, calculateOnQuestionEnded } = require('../functions/answers');
 const { sanitizeRoom } = require('../functions/rooms');
 
@@ -20,9 +21,6 @@ class ServerRoom {
          */
         this.hostPassword = '';
 
-        /**
-         * @type {ParentNamespace}
-         */
         this.nsp = io.of('/' + room.code);
 
         this.nsp.on('connection', (socket) => {
@@ -162,6 +160,13 @@ class ServerRoom {
                 this.broadcast();
             });
 
+            socket.on('updateQuestion', (data) => {
+                hydrate(room.currentQuestion, data);
+
+                console.log(socket.id, 'Updated Question', JSON.stringify(room.currentQuestion));
+                this.broadcast();
+            });
+
             socket.on('clearQuestion', () => {
                 console.log(socket.id, 'Clear Question');
                 room.currentQuestion = null;
@@ -193,6 +198,7 @@ class ServerRoom {
                 console.log(socket.id, 'Start Question', questionId);
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
                     room.currentQuestion.started = true;
+                    room.currentQuestion.startedAt = new Date();
                 } else {
                     console.log(socket.id, 'Invalid question ID.');
                 }

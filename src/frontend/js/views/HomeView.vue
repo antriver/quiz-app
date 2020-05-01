@@ -97,6 +97,7 @@
                 </div>
             </div>
         </section>
+        <PageFooter />
     </div>
 </template>
 
@@ -104,9 +105,13 @@
 <script>
 import HomeHero from '@frontend/components/HomeHero';
 import axios from 'axios';
+import PageFooter from '@frontend/components/PageFooter';
 
 export default {
-    components: { HomeHero },
+    components: {
+        HomeHero,
+        PageFooter
+    },
 
     methods: {
         hostGame() {

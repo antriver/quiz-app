@@ -23,6 +23,11 @@ class Question {
         this.started = false;
 
         /**
+         * @type {Date}
+         */
+        this.startedAt = null;
+
+        /**
          * @type {boolean}
          */
         this.ended = false;
@@ -36,6 +41,11 @@ class Question {
          * @type {boolean}
          */
         this.evil = false;
+
+        /**
+         * @type {?Number}
+         */
+        this.timeLimit = null;
 
         /**
          * @type {Object<Answer>}

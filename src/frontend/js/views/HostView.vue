@@ -1,93 +1,131 @@
 <template>
     <div v-if="isHost"
-         id="host">
+         id="host"
+         class="container">
         <div id="left">
-
-            <div id="room-code">
-                <div class="alert alert-info">
-                    <p>Your room code is <strong>{{ room.code }}</strong>. Players can join with this link:</p>
-                    <input type="text"
-                           class="form-control text-center"
-                           readonly
-                           :value="'https://questicals.com/' + room.code" />
-                    <p>The page you are currently on is the only way to host the room. Bookmark it if you don't want to lose it!</p>
-                </div>
-            </div>
-
             <div class="container">
+                <div id="room-code">
+                    <div class="alert alert-info">
+                        <p>Your room code is <strong>{{ room.code }}</strong>. Players can join with this link:</p>
+                        <input type="text"
+                               class="form-control text-center"
+                               readonly
+                               :value="'https://questicals.com/' + room.code" />
+                        <p>The page you are now on is the only way to host the room. Bookmark it if you don't want to lose it!</p>
+                    </div>
+                </div>
 
                 <!-- If a question has been created and the answer entered. -->
-                <div v-if="roomQuestion"
-                     id="question-status">
+                <template v-if="roomQuestion">
+                    <div
+                        id="question-status"
+                        class="box">
+                        <template v-if="!roomQuestion.started">
+                            <h2>Question Ready To Answer</h2>
+                            <p>The buttons are visible on player's screens but are disabled. The buttons will be enabled when you click Start.</p>
+                        </template>
+                        <template v-else-if="!roomQuestion.ended">
+                            <h2>Question Is Being Answered</h2>
+                            <p>The buttons are visible and enabled on players' screens. Players can enter their answers right now.</p>
+                        </template>
+                        <template v-else>
+                            <h2>Answering Finished</h2>
+                            <p>The buttons are no longer visible on player's screens.</p>
+                        </template>
 
-                    <template v-if="!roomQuestion.started">
-                        <h2>Question Ready To Answer</h2>
-                        <p>The buttons are visible on player's screens but are disabled. The buttons will be enabled when you click Start.</p>
-                    </template>
-                    <template v-else-if="!roomQuestion.ended">
-                        <h2>Question Is Being Answered</h2>
-                        <p>The buttons are visible and enabled on players' screens. Players can enter their answers right now.</p>
-                    </template>
-                    <template v-else>
-                        <h2>Answering Finished</h2>
-                        <p>The buttons are no longer visible on player's screens.</p>
-                    </template>
+                        <div class="my">
+                            <h3>Correct Answer:</h3>
+                            <span class="label correct-answer-label label-warning">{{ roomQuestion.answer }}</span>
+                        </div>
 
-                    <p>
-                        <strong>Correct Answer:</strong>
-                        <span class="label label-warning">{{ roomQuestion.answer }}</span>
-                    </p>
+                        <div v-if="!roomQuestion.started"
+                             class="my">
+                            <h3>Time Limit:</h3>
+                            <div class="btn-group"
+                                 role="group">
+                                <button type="button"
+                                        :class="[roomQuestion.timeLimit === 10 ? 'active btn-primary' : 'btn-default']"
+                                        class="btn"
+                                        @click.prevent="setTimeLimit(10)">
+                                    10 Seconds
+                                </button>
+                                <button type="button"
+                                        :class="[roomQuestion.timeLimit === 30 ? 'active btn-primary' : 'btn-default']"
+                                        class="btn"
+                                        @click.prevent="setTimeLimit(30)">
+                                    30 Seconds
+                                </button>
+                                <button type="button"
+                                        :class="[roomQuestion.timeLimit === null ? 'active btn-primary' : 'btn-default']"
+                                        class="btn"
+                                        @click.prevent="setTimeLimit(null)">
+                                    None
+                                </button>
+                            </div>
+                        </div>
 
-                    <div v-if="!roomQuestion.started">
-                        <a class="btn btn-success btn-lg"
-                           @click.prevent="startQuestion"><i class="fas fa-play"></i> Start Answering</a>
+                        <div v-if="!roomQuestion.started">
+                            <a class="btn btn-success btn-lg"
+                               @click.prevent="startQuestion"><i class="fas fa-play"></i> Start Answering</a>
+                        </div>
+                        <div v-else-if="!roomQuestion.ended">
+                            <a class="btn btn-danger btn-lg"
+                               @click.prevent="endQuestion"><i class="fas fa-stop"></i> Stop Answering</a>
+                        </div>
+                        <div v-else>
+                            <a class="btn btn-warning btn-lg"
+                               @click.prevent="clearQuestion"><i class="fas fa-arrow-right"></i> Next Question</a>
+                        </div>
                     </div>
-                    <div v-else-if="!roomQuestion.ended">
-                        <a class="btn btn-danger btn-lg"
-                           @click.prevent="endQuestion"><i class="fas fa-stop"></i> Stop Answering</a>
-                    </div>
-                    <div v-else>
-                        <a class="btn btn-warning btn-lg"
-                           @click.prevent="clearQuestion"><i class="fas fa-arrow-right"></i> Next Question</a>
-                    </div>
-
-                    <hr v-if="roomQuestion.started"/>
 
                     <div v-if="roomQuestion.started"
-                         id="answers">
+                         class="box text-center">
                         <h3>Answers</h3>
                         <Answers />
                     </div>
-                </div>
+                </template>
 
                 <!-- If a question has been created but the answer entered. -->
                 <template v-else-if="nextQuestion">
-                    <AnswerInput title="Provide the correct answer."
-                                 :question-type="nextQuestion.type"
-                                 :question="nextQuestion"
-                                 :active="true"
-                                 @choice="setCorrectAnswer"></AnswerInput>
+                    <div class="box">
+                        <h2 class="text-center">Provide The Correct Answer</h2>
+                        <AnswerInput title=""
+                                     :question-type="nextQuestion.type"
+                                     :question="nextQuestion"
+                                     :active="true"
+                                     @choice="setCorrectAnswer"></AnswerInput>
+                    </div>
                 </template>
 
                 <!-- If no question has been created. -->
-                <div v-else
-                     id="new-question-btns">
-                    <a class="btn btn-warning btn-lg"
-                       @click.prevent="newQuestion('letters')"><i class="fas fa-text"></i> New Letter Question</a>
+                <template v-else>
+                    <div id="new-question-btns"
+                         class="box">
+                        <h2>Start A New Question</h2>
+                        <a class="btn btn-warning btn-lg"
+                           @click.prevent="newQuestion('letters')">
+                            <i class="fas fa-text"></i> New Letter Question
+                        </a>
 
-                    <a class="btn btn-warning btn-lg"
-                       @click.prevent="newQuestion('multiple')"><i class="fas fa-check-square"></i> New Multiple Choice Question</a>
+                        <a class="btn btn-warning btn-lg"
+                           @click.prevent="newQuestion('multiple')">
+                            <i class="fas fa-check-square"></i> New Multiple Choice Question
+                        </a>
 
-                    <a class="btn btn-warning btn-lg"
-                       @click.prevent="newQuestion('numbers')"><i class="fas fa-calculator"></i> New Number Question</a>
-                </div>
+                        <a class="btn btn-warning btn-lg"
+                           @click.prevent="newQuestion('numbers')">
+                            <i class="fas fa-calculator"></i> New Number Question
+                        </a>
+                    </div>
+                </template>
             </div>
         </div>
 
         <div id="right">
             <div class="container">
-
-                <h3 class="hidden-md hidden-lg text-center">Scores</h3>
+                <h3 class="hidden-md hidden-lg text-center">
+                    Scores
+                </h3>
 
                 <Scores @remove-player="removePlayer" />
 
@@ -200,6 +238,10 @@ export default {
             this.$options.socket.emit('newQuestion', this.nextQuestion);
         },
 
+        setTimeLimit(timeLimit) {
+            this.$options.socket.emit('updateQuestion', { timeLimit });
+        },
+
         startQuestion() {
             this.$options.socket.emit('startQuestion', this.roomQuestion.id);
         },
@@ -231,38 +273,38 @@ export default {
 <style lang="less">
 @import (less, reference) "../../less/app.less";
 
-#new-question-btns {
-    padding: 10px;
-    text-align: center;
-    margin: auto;
+#host {
+    padding: 0;
 
+    hr {
+        margin: 30px 0;
+    }
+
+    .correct-answer-label {
+        font-size: 16px;
+    }
+}
+
+#new-question-btns {
     .btn {
         margin: 5px;
     }
 }
 
 #room-code {
+    margin: -15px -15px 15px;
+
     .alert {
         margin: 0;
         text-align: center;
 
         input {
-            margin: 5px;
+            margin: 5px 0;
         }
     }
 }
 
-#host {
-    hr {
-        margin: 30px 0;
-    }
-}
-
 #question-status {
-    background: #fff;
-    border: 1px #ddd solid;
-    padding: 15px;
-    border-radius: @border-radius-base;
     text-align: center;
 
     > :first-child {
@@ -272,12 +314,6 @@ export default {
 
 @media (min-width: @screen-md-min) {
     #host {
-        overflow: auto;
-        position: relative;
-        height: ~"calc(100vh - @{header-height})";
-        max-width: 1170px;
-        margin: auto;
-
         h2,
         h3 {
             &:first-child {
@@ -286,31 +322,9 @@ export default {
         }
 
         #left {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-
             float: left;
             max-width: none;
             width: 70%;
-
-            #room-code {
-                padding: 15px;
-                flex-grow: 0;
-                flex-shrink: 0;
-                width: 100%;
-                text-align: center;
-
-                .alert {
-                    margin: 0;
-                }
-            }
-
-            > .container {
-                flex-grow: 1;
-                flex-shrink: 1;
-            }
         }
 
         #right {
@@ -343,6 +357,10 @@ export default {
                 margin-top: 0;
             }
         }
+    }
+
+    #room-code {
+        margin: 0 0 15px;
     }
 }
 </style>

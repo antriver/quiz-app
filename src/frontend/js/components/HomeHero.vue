@@ -12,7 +12,7 @@
             <div id="screenshot-col">
                 <div id="play-btn">
                     <div>
-                        Ready to play?..
+                        Ready to play?
                         <br />
                         <router-link class="btn btn-primary btn-lg pulse"
                                      to="/join">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <img id="screenshots"
-                     src="/assets/img/screenshots.png" />
+                     src="/assets/img/screenshots2.png" />
 
             </div>
         </div>
@@ -98,19 +98,17 @@ export default {
 
 @media (min-width: @screen-md) {
     #home-hero {
-        display: flex;
-        align-items: stretch;
-        justify-content: stretch;
-
         > .container {
             padding: 0;
             display: flex;
             align-items: stretch;
-            justify-content: stretch;
+            justify-content: space-between;
             min-height: 70vh;
         }
 
         #title-col {
+            flex-grow: 1;
+            flex-shrink: 1;
             flex-basis: 40%;
             margin-right: 50px;
             padding-bottom: 50px;
@@ -121,6 +119,9 @@ export default {
         }
 
         #screenshot-col {
+            flex-grow: 0;
+            flex-shrink: 0;
+
             display: flex;
             align-items: stretch;
             justify-content: stretch;
