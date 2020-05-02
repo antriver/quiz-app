@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <img id="screenshots"
-                     src="/assets/img/screenshots2.png" />
+                     src="/assets/img/screenshots3.png" />
 
             </div>
         </div>
