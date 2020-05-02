@@ -15,6 +15,13 @@ Vue.use(VueAnalytics, {
     router
 });
 
+Vue.filter('points', (value) => {
+    if (value > 0) {
+        return '+' + value;
+    }
+    return value;
+});
+
 const app = new Vue({
     router,
     store,

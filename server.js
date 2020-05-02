@@ -66,13 +66,17 @@ const createRoom = (code) => {
 
 createRoom('quiz');
 
+let cleanRoomsTimeout = null;
+
 // For each WebSocket connection.
 io.on('connection', (socket) => {
     console.log(socket.id, 'Connected default', socket.request.connection.remoteAddress);
+    clearTimeout(cleanRoomsTimeout);
 
     socket.on('disconnect', () => {
         console.log(socket.id, 'Disconnect');
-        setTimeout(() => {
+        clearTimeout(cleanRoomsTimeout);
+        cleanRoomsTimeout = setTimeout(() => {
             // Kill any now empty rooms.
             Object.values(rooms).forEach((room) => {
                 if (

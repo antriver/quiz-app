@@ -32,6 +32,11 @@ class Player {
          */
         this.score = 0;
 
+        /**
+         * @type {number}
+         */
+        this.manualScoreAdjustment = 0;
+
         hydrate(this, data);
     }
 }

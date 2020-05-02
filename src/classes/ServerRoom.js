@@ -200,6 +200,22 @@ class ServerRoom {
                 this.broadcast();
             });
 
+            socket.on('adjustScore', ({ playerId, adjustBy }) => {
+                if (!isHost()) {
+                    return;
+                }
+
+                if (!room.players[playerId]) {
+                    return;
+                }
+
+                console.log(socket.id, 'Adjust Score', playerId, adjustBy);
+                room.players[playerId].score += adjustBy;
+                room.players[playerId].manualScoreAdjustment += adjustBy;
+
+                this.broadcast();
+            });
+
             socket.on('resetScores', () => {
                 if (!isHost()) {
                     return;
@@ -209,6 +225,7 @@ class ServerRoom {
                 Object.values(room.players)
                     .forEach((player) => {
                         player.score = 0;
+                        player.manualScoreAdjustment = 0;
                     });
                 this.broadcast();
             });
@@ -232,7 +249,7 @@ class ServerRoom {
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
                     room.currentQuestion.started = true;
                     room.currentQuestion.startedAt = new Date();
-                    
+
                     if (room.currentQuestion.timeLimit) {
                         // We need to deal with the time limit.
                         // End the question when it is up, and frequently send the remaining time in ms to clients.

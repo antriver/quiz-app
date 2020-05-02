@@ -37,7 +37,7 @@
                               class="label label-info">Closest</span>
                     </td>
                     <td>
-                        {{ (answer.points > 0 ? '+' : '') + answer.points }}
+                        {{ answer.points | points }}
                     </td>
                 </tr>
             </tbody>

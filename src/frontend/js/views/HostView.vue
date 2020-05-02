@@ -156,7 +156,8 @@
                         Scores
                     </h3>
 
-                    <Scores @remove-player="removePlayer" />
+                    <Scores @remove-player="removePlayer"
+                            @adjust-score="adjustScore" />
 
                     <div class="text-center">
                         <a class="btn btn-sm btn-danger"
@@ -180,6 +181,7 @@ import { mapState } from 'vuex';
 import Scores from '@frontend/components/Scores';
 import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
 import { validateRoom } from '@frontend/functions/rooms';
+
 const { millisecondsToString, millisecondsToSecondsString } = require('@/functions/time');
 
 export default {
@@ -329,6 +331,10 @@ export default {
 
         resetPlayers() {
             this.$options.socket.emit('resetUsers');
+        },
+
+        adjustScore({ player, adjustBy }) {
+            this.$options.socket.emit('adjustScore', { playerId: player.id, adjustBy });
         },
 
         removePlayer(playerId) {
