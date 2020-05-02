@@ -420,7 +420,6 @@ export default {
         #right {
             width: 35%;
             float: right;
-            background: #fff;
 
             .container {
                 padding-left: 0;
