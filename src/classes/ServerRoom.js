@@ -139,6 +139,8 @@ class ServerRoom {
              * Host functions...
              */
 
+            const isHost = () => room.hostWebsocketIds.indexOf(socket.id) !== -1;
+
             socket.on('becomeHost', (data, callback) => {
                 console.log(socket.id, 'Become Host');
 
@@ -147,7 +149,7 @@ class ServerRoom {
                     return;
                 }
 
-                if (room.hostWebsocketIds.indexOf(socket.id) === -1) {
+                if (!isHost()) {
                     room.hostWebsocketIds.push(socket.id);
                 }
 
@@ -158,12 +160,20 @@ class ServerRoom {
             });
 
             socket.on('newQuestion', (data) => {
+                if (!isHost()) {
+                    return;
+                }
+
                 room.currentQuestion = new Question(data);
                 console.log(socket.id, 'New Question', JSON.stringify(room.currentQuestion));
                 this.broadcast();
             });
 
             socket.on('updateQuestion', (data) => {
+                if (!isHost()) {
+                    return;
+                }
+
                 hydrate(room.currentQuestion, data);
 
                 console.log(socket.id, 'Updated Question', JSON.stringify(room.currentQuestion));
@@ -171,18 +181,30 @@ class ServerRoom {
             });
 
             socket.on('clearQuestion', () => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'Clear Question');
                 room.currentQuestion = null;
                 this.broadcast();
             });
 
             socket.on('removePlayer', (playerId) => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'Remove Player', playerId);
                 delete room.players[playerId];
                 this.broadcast();
             });
 
             socket.on('resetScores', () => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'Reset Scores');
                 Object.values(room.players)
                     .forEach((player) => {
@@ -192,18 +214,25 @@ class ServerRoom {
             });
 
             socket.on('resetUsers', () => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'Reset Scores');
                 room.players = {};
                 this.broadcast();
             });
 
             socket.on('startQuestion', (questionId) => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'Start Question', questionId);
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
                     room.currentQuestion.started = true;
                     room.currentQuestion.startedAt = new Date();
-
-                    console.log('room.currentQuestion.timeLimit');
+                    
                     if (room.currentQuestion.timeLimit) {
                         // We need to deal with the time limit.
                         // End the question when it is up, and frequently send the remaining time in ms to clients.
@@ -216,6 +245,10 @@ class ServerRoom {
             });
 
             socket.on('endQuestion', (questionId) => {
+                if (!isHost()) {
+                    return;
+                }
+
                 console.log(socket.id, 'End Question', questionId);
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
                     this.endQuestion();
