@@ -43,9 +43,18 @@ class Question {
         this.evil = false;
 
         /**
+         * Time limit to answer, in milliseconds.
+         *
          * @type {?Number}
          */
         this.timeLimit = null;
+
+        /**
+         * Milliseconds left to answer.
+         *
+         * @type {?Number}
+         */
+        this.timeRemaining = null;
 
         /**
          * @type {Object<Answer>}

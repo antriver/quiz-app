@@ -11,7 +11,10 @@
                                class="form-control text-center"
                                readonly
                                :value="'https://questicals.com/' + room.code" />
-                        <p>The page you are now on is the only way to host the room. Bookmark it if you don't want to lose it!</p>
+                        <p>
+                            The page you are now on is the only way to host the room. Bookmark it if you don't want to
+                            lose it!
+                        </p>
                     </div>
                 </div>
 
@@ -22,11 +25,17 @@
                         class="box">
                         <template v-if="!roomQuestion.started">
                             <h2>Question Ready To Answer</h2>
-                            <p>The buttons are visible on player's screens but are disabled. The buttons will be enabled when you click Start.</p>
+                            <p>
+                                The buttons are visible on player's screens but are disabled. The buttons will be enabled
+                                when you click Start.
+                            </p>
                         </template>
                         <template v-else-if="!roomQuestion.ended">
                             <h2>Question Is Being Answered</h2>
-                            <p>The buttons are visible and enabled on players' screens. Players can enter their answers right now.</p>
+                            <p>
+                                The buttons are visible and enabled on players' screens. Players can enter their answers
+                                right now.
+                            </p>
                         </template>
                         <template v-else>
                             <h2>Answering Finished</h2>
@@ -44,16 +53,22 @@
                             <div class="btn-group"
                                  role="group">
                                 <button type="button"
-                                        :class="[roomQuestion.timeLimit === 10 ? 'active btn-primary' : 'btn-default']"
+                                        :class="[roomQuestion.timeLimit === 10000 ? 'active btn-primary' : 'btn-default']"
                                         class="btn"
-                                        @click.prevent="setTimeLimit(10)">
+                                        @click.prevent="setTimeLimit(10000)">
                                     10 Seconds
                                 </button>
                                 <button type="button"
-                                        :class="[roomQuestion.timeLimit === 30 ? 'active btn-primary' : 'btn-default']"
+                                        :class="[roomQuestion.timeLimit === 30000 ? 'active btn-primary' : 'btn-default']"
                                         class="btn"
-                                        @click.prevent="setTimeLimit(30)">
+                                        @click.prevent="setTimeLimit(30000)">
                                     30 Seconds
+                                </button>
+                                <button type="button"
+                                        :class="[roomQuestion.timeLimit === 60000 ? 'active btn-primary' : 'btn-default']"
+                                        class="btn"
+                                        @click.prevent="setTimeLimit(60000)">
+                                    60 Seconds
                                 </button>
                                 <button type="button"
                                         :class="[roomQuestion.timeLimit === null ? 'active btn-primary' : 'btn-default']"
@@ -69,7 +84,17 @@
                                @click.prevent="startQuestion"><i class="fas fa-play"></i> Start Answering</a>
                         </div>
                         <div v-else-if="!roomQuestion.ended">
-                            <a class="btn btn-danger btn-lg"
+                            <template v-if="roomQuestion.timeLimit">
+                                <h3>Time Remaining:</h3>
+                                <h4>{{ timeRemainingString }}</h4>
+                            </template>
+                            <template v-else>
+                                <h3>Time Since Starting:</h3>
+                                <h4>{{ getTimeSinceStartedString() }}</h4>
+                            </template>
+
+                            <a class="btn btn-danger btn-lg mt"
+                               :class="[roomQuestion.timeLimit ? 'btn-sm' : 'btn-lg']"
                                @click.prevent="endQuestion"><i class="fas fa-stop"></i> Stop Answering</a>
                         </div>
                         <div v-else>
@@ -88,7 +113,9 @@
                 <!-- If a question has been created but the answer entered. -->
                 <template v-else-if="nextQuestion">
                     <div class="box">
-                        <h2 class="text-center">Provide The Correct Answer</h2>
+                        <h2 class="text-center">
+                            Provide The Correct Answer
+                        </h2>
                         <AnswerInput title=""
                                      :question-type="nextQuestion.type"
                                      :question="nextQuestion"
@@ -123,18 +150,21 @@
 
         <div id="right">
             <div class="container">
-                <h3 class="hidden-md hidden-lg text-center">
-                    Scores
-                </h3>
+                <div id="scores"
+                     class="box">
+                    <h3>
+                        Scores
+                    </h3>
 
-                <Scores @remove-player="removePlayer" />
+                    <Scores @remove-player="removePlayer" />
 
-                <div class="text-center">
-                    <a class="btn btn-sm btn-danger"
-                       @click.prevent="resetScores">Reset Scores</a>
+                    <div class="text-center">
+                        <a class="btn btn-sm btn-danger"
+                           @click.prevent="resetScores">Reset Scores</a>
 
-                    <a class="btn btn-sm btn-danger"
-                       @click.prevent="resetPlayers">Reset Players</a>
+                        <a class="btn btn-sm btn-danger"
+                           @click.prevent="resetPlayers">Reset Players</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -150,6 +180,7 @@ import { mapState } from 'vuex';
 import Scores from '@frontend/components/Scores';
 import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
 import { validateRoom } from '@frontend/functions/rooms';
+const { millisecondsToString, millisecondsToSecondsString } = require('@/functions/time');
 
 export default {
     components: {
@@ -171,7 +202,9 @@ export default {
 
             validRoom: null,
 
-            isHost: false
+            isHost: false,
+
+            lastTimeLimit: null
         };
     },
 
@@ -188,6 +221,26 @@ export default {
                 .filter(
                     (p) => p.active || this.room.currentQuestion.answers.hasOwnProperty(p.id)
                 );
+        },
+
+        timeRemainingString() {
+            if (this.roomQuestion && this.roomQuestion.timeRemaining) {
+                return millisecondsToSecondsString(this.roomQuestion.timeRemaining);
+            }
+
+            return null;
+        },
+
+        questionStartedAtMs() {
+            return this.roomQuestion && this.roomQuestion.startedAt ? new Date(this.roomQuestion.startedAt).getTime() : null;
+        }
+    },
+
+    watch: {
+        roomQuestion(newVal) {
+            if (newVal) {
+                this.lastTimeLimit = newVal.timeLimit;
+            }
         }
     },
 
@@ -223,11 +276,26 @@ export default {
             });
     },
 
+    mounted() {
+        // To make the timer work.
+        setInterval(() => this.$forceUpdate(), 51);
+    },
+
     methods: {
+        getTimeSinceStartedString() {
+            if (!this.questionStartedAtMs) {
+                return null;
+            }
+
+            const diff = (new Date()).getTime() - this.questionStartedAtMs;
+            return millisecondsToString(diff);
+        },
+
         newQuestion(type) {
             this.nextQuestion = new Question({
                 id: generateId(),
                 type,
+                timeLimit: this.lastTimeLimit,
                 points: type === 'numbers' ? 2 : 1
             });
         },
@@ -312,6 +380,22 @@ export default {
     }
 }
 
+@media (min-width: @screen-sm-min) {
+    #room-code {
+        margin: 0 0 15px;
+    }
+}
+
+@media (max-width: @screen-sm-max) {
+    #host {
+        #right {
+            > .container {
+                padding-top: 0;
+            }
+        }
+    }
+}
+
 @media (min-width: @screen-md-min) {
     #host {
         h2,
@@ -324,11 +408,11 @@ export default {
         #left {
             float: left;
             max-width: none;
-            width: 70%;
+            width: 65%;
         }
 
         #right {
-            width: 30%;
+            width: 35%;
             float: right;
             background: #fff;
 
@@ -357,10 +441,6 @@ export default {
                 margin-top: 0;
             }
         }
-    }
-
-    #room-code {
-        margin: 0 0 15px;
     }
 }
 </style>

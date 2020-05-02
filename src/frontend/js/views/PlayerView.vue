@@ -23,7 +23,7 @@
         </template>
         <template v-else>
             <AnswerInput v-if="currentQuestion && !currentQuestion.ended"
-                         :questionType="currentQuestion.type"
+                         :question-type="currentQuestion.type"
                          :active="currentQuestion.started"
                          :title="title"
                          :existing-choice="answer ? answer.answer : null"
@@ -41,6 +41,7 @@ import RegisterForm from '../components/RegisterForm';
 import WebsocketMixin from '@frontend/mixins/WebsocketMixin';
 import { mapState } from 'vuex';
 import { validateRoom } from '@frontend/functions/rooms';
+import { millisecondsToSecondsString } from '@/functions/time';
 
 export default {
     name: 'PlayerView',
@@ -51,7 +52,7 @@ export default {
     },
 
     mixins: [
-        WebsocketMixin
+        WebsocketMixin,
     ],
 
     data() {
@@ -78,6 +79,10 @@ export default {
 
             if (this.answer) {
                 return 'You have answered.';
+            }
+
+            if (this.currentQuestion.timeRemaining) {
+                return millisecondsToSecondsString(this.currentQuestion.timeRemaining) + ' left to answer...';
             }
 
             return 'Select your answer...';

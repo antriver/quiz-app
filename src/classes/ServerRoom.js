@@ -21,6 +21,9 @@ class ServerRoom {
          */
         this.hostPassword = '';
 
+        this.stopQuestionTimeout = null;
+        this.questionTimerInterval = null;
+
         this.nsp = io.of('/' + room.code);
 
         this.nsp.on('connection', (socket) => {
@@ -199,6 +202,13 @@ class ServerRoom {
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
                     room.currentQuestion.started = true;
                     room.currentQuestion.startedAt = new Date();
+
+                    console.log('room.currentQuestion.timeLimit');
+                    if (room.currentQuestion.timeLimit) {
+                        // We need to deal with the time limit.
+                        // End the question when it is up, and frequently send the remaining time in ms to clients.
+                        this.startQuestionTimer(room.currentQuestion.timeLimit);
+                    }
                 } else {
                     console.log(socket.id, 'Invalid question ID.');
                 }
@@ -208,14 +218,44 @@ class ServerRoom {
             socket.on('endQuestion', (questionId) => {
                 console.log(socket.id, 'End Question', questionId);
                 if (room.currentQuestion && questionId === room.currentQuestion.id) {
-                    room.currentQuestion.ended = true;
-                    calculateOnQuestionEnded(room.currentQuestion);
+                    this.endQuestion();
                 } else {
                     console.log('Invalid question ID.');
                 }
-                this.broadcast();
             });
         });
+    }
+
+    startQuestionTimer(ms) {
+        const endsAtMs = (new Date()).getTime() + ms;
+
+        this.questionTimerInterval = setInterval(
+            () => {
+                if (this.room.currentQuestion) {
+                    this.room.currentQuestion.timeRemaining = endsAtMs - (new Date()).getTime();
+                    this.broadcast();
+                }
+            },
+            200
+        );
+
+        this.stopQuestionTimeout = setTimeout(
+            () => {
+                if (this.room.currentQuestion) {
+                    this.endQuestion();
+                }
+            },
+            ms
+        );
+    }
+
+    endQuestion() {
+        clearInterval(this.questionTimerInterval);
+        clearInterval(this.stopQuestionTimeout);
+
+        this.room.currentQuestion.ended = true;
+        calculateOnQuestionEnded(this.room.currentQuestion);
+        this.broadcast();
     }
 
     broadcast() {
