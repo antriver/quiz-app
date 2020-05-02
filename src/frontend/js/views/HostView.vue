@@ -64,12 +64,12 @@
                                         @click.prevent="setTimeLimit(30000)">
                                     30 Seconds
                                 </button>
-                                <button type="button"
+                                <!-- <button type="button"
                                         :class="[roomQuestion.timeLimit === 60000 ? 'active btn-primary' : 'btn-default']"
                                         class="btn"
                                         @click.prevent="setTimeLimit(60000)">
                                     60 Seconds
-                                </button>
+                                </button> -->
                                 <button type="button"
                                         :class="[roomQuestion.timeLimit === null ? 'active btn-primary' : 'btn-default']"
                                         class="btn"
