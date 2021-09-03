@@ -7,10 +7,10 @@
                 <h2>How To Play</h2>
                 <ul>
                     <li>
-                        Get together with your friends get together on Skype, Google Hangouts, Zoom, or another video
+                        Get together with your friends on Skype, Google Hangouts, Zoom, or another video
                         chat service.
                     </li>
-                    <li>Your quizmaster / host will start a room and give you a link to join.</li>
+                    <li>Your quiz master / host will start a room and give you a link to join.</li>
                     <li>Your hosts reads questions aloud and sends the question to your device.</li>
                     <li>
                         Answer by pressing:
