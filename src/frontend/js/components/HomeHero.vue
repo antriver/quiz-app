@@ -6,7 +6,7 @@
                     <img id="logo"
                          src="/assets/img/questicals.svg" />
                     <h2>Run a virtual pub quiz!</h2>
-                    <p>Now there's need to meet up in person. With Questicals you can run a trivia night over the internet. The host comes up with the questions and players answer on their phones.</p>
+                    <p>With Questicals you can run a trivia night and stay at home at the same time. The host comes up with the questions and players answer on their phones.</p>
                 </div>
             </div>
             <div id="screenshot-col">
