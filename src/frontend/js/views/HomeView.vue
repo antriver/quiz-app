@@ -7,12 +7,19 @@
                 <h2>How To Play</h2>
                 <ul>
                     <li>
-                        Get together with your friends get together on Skype, Google Hangots, Zoom, or another video
+                        Get together with your friends get together on Skype, Google Hangouts, Zoom, or another video
                         chat service.
                     </li>
                     <li>Your quizmaster / host will start a room and give you a link to join.</li>
                     <li>Your hosts reads questions aloud and sends the question to your device.</li>
-                    <li>Answer by pressing the first letter of the answer for letter or multiple choice questions, or by typing in your answer for number questions.</li>
+                    <li>
+                        Answer by pressing:
+                        <ul>
+                            <li>The first answer for, for normal questions.</li>
+                            <li>The letter corresponding to the answer, for multiple choice questions.</li>
+                            <li>Or by typing in your answer for number questions.</li>
+                        </ul>
+                    </li>
                     <li>There are bonus points for being the first person to get the answer correct!</li>
                 </ul>
             </div>
